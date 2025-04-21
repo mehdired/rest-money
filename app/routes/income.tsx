@@ -3,34 +3,16 @@ import { columns } from '../components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '../components/datatable';
 import { FormEvent, useState } from 'react';
-
-const income: Income[] = [
-  {
-    id: 1,
-    from: 'Redbox Media',
-    date: new Date('2025-03-14'),
-    amount: 1000,
-  },
-  {
-    id: 2,
-    from: 'Redbox Media',
-    date: new Date('2025-03-18'),
-    amount: 1000,
-  },
-  {
-    id: 3,
-    from: 'Todo Digital',
-    date: new Date('2025-04-14'),
-    amount: 2000,
-  },
-];
+import { Button } from '../components/ui/button';
+import { insertIncome } from '../db';
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const [data, setData] = useState<Income[]>(income);
+  const [data] = useState<Income[]>([]);
+  const [showForm, setShowForm] = useState(false);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,28 +28,43 @@ function RouteComponent() {
       alert('Tous les champs sont obligatoire');
       return;
     }
+    const newIncome = {
+      id: crypto.randomUUID(),
+      from: from,
+      date: new Date(date),
+      amount: Number(amount),
+    };
 
-    setData([
+    /*setData([
       ...data,
       {
-        id: Math.max(0, ...data.map((item) => item.id)) + 1,
+        id: crypto.randomUUID(),
         from: from,
         date: new Date(date),
         amount: Number(amount),
       },
-    ]);
+    ]);*/
+
+    //insertIncome(newIncome);
 
     form.reset();
   };
 
   return (
     <div>
-      <form method="post" onSubmit={onSubmit} className="flex gap-4 items-center">
-        <input type="text" id="from" name="from" placeholder="from" />
-        <input type="date" id="date" name="date" placeholder="date" />
-        <input type="number" id="amount" name="amount" placeholder="amount" />
-        <button>Add</button>
-      </form>
+      <div>
+        <Button onClick={() => setShowForm(!showForm)} className="cursor-pointer">
+          Add an income
+        </Button>
+      </div>
+      {showForm && (
+        <form method="post" onSubmit={onSubmit} className="flex gap-4 items-center">
+          <input type="text" id="from" name="from" placeholder="from" />
+          <input type="date" id="date" name="date" placeholder="date" />
+          <input type="number" id="amount" name="amount" placeholder="amount" />
+          <Button className="cursor-pointer">Add</Button>
+        </form>
+      )}
       <DataTable columns={columns} data={data} />
     </div>
   );
