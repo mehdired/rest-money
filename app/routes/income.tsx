@@ -4,14 +4,29 @@ import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '../components/datatable';
 import { FormEvent, useState } from 'react';
 import { Button } from '../components/ui/button';
-import { insertIncome } from '../db';
+import { selectIncomes, insertIncome } from '../db';
+import { createServerFn } from '@tanstack/react-start';
+
+const addIncome = createServerFn({ method: 'POST', response: 'data' })
+  .validator((d: Income) => d)
+  .handler(async ({ data }) => {
+    await insertIncome(data);
+  });
+
+const getIncome = createServerFn({ method: 'GET' }).handler(async () => {
+  return await selectIncomes();
+});
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
+  loader: () => {
+    return getIncome();
+  },
 });
 
 function RouteComponent() {
-  const [data] = useState<Income[]>([]);
+  const income = Route.useLoaderData();
+  const [data, setData] = useState<Income[]>(income);
   const [showForm, setShowForm] = useState(false);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -35,17 +50,8 @@ function RouteComponent() {
       amount: Number(amount),
     };
 
-    /*setData([
-      ...data,
-      {
-        id: crypto.randomUUID(),
-        from: from,
-        date: new Date(date),
-        amount: Number(amount),
-      },
-    ]);*/
-
-    //insertIncome(newIncome);
+    addIncome({ data: newIncome });
+    setData([...data, newIncome]);
 
     form.reset();
   };
