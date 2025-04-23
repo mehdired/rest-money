@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Outlet, createRootRoute, HeadContent, Scripts } from '@tanstack/react-router';
+import { Outlet, createRootRoute, HeadContent, Scripts, Link } from '@tanstack/react-router';
 import appCss from '../styles/app.css?url';
 
 export const Route = createRootRoute({
@@ -41,6 +41,16 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body>
+        <header>
+          <nav className="flex items-center gap-4 container py-2 justify-center">
+            <Link to="/" className="[&.active]:font-bold [&.active]:cursor-auto">
+              Dashboard
+            </Link>
+            <Link to="/income" className="[&.active]:font-bold [&.active]:cursor-auto">
+              Income
+            </Link>
+          </nav>
+        </header>
         {children}
         <Scripts />
       </body>

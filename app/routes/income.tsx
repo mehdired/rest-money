@@ -57,10 +57,10 @@ function RouteComponent() {
   };
 
   return (
-    <div>
+    <div className="container">
       <div>
         <Button onClick={() => setShowForm(!showForm)} className="cursor-pointer">
-          Add an income
+          {!showForm ? 'Add an income' : 'Hide the form'}
         </Button>
       </div>
       {showForm && (
