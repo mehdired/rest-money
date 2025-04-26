@@ -3,31 +3,12 @@ import { columns } from '../components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '../components/datatable';
 import { FormEvent, useState } from 'react';
-import { dbSelectAllIncomes, dbInsertIncome, dbRemoveIncome } from '../db';
-import { createServerFn } from '@tanstack/react-start';
+import { getAllIncomes, addIncome, removeIncome } from '../db';
 import { AddIncome } from '../components/add-income';
-
-const addIncome = createServerFn({ method: 'POST', response: 'data' })
-  .validator((d: Income) => d)
-  .handler(async ({ data }) => {
-    await dbInsertIncome(data);
-  });
-
-const getAllIncomes = createServerFn({ method: 'GET' }).handler(async () => {
-  return await dbSelectAllIncomes();
-});
-
-const removeIncome = createServerFn({ method: 'POST', response: 'data' })
-  .validator((d: Income['id']) => d)
-  .handler(async ({ data }) => {
-    return await dbRemoveIncome(data);
-  });
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
-  loader: async () => {
-    return await getAllIncomes();
-  },
+  loader: async () => await getAllIncomes(),
 });
 
 function RouteComponent() {
