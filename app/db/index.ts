@@ -10,14 +10,14 @@ const client = createClient({
 
 export const db = drizzle({ client });
 
-export async function insertIncome(data: Income) {
+export async function dbInsertIncome(data: Income) {
   return await db.insert(income).values(data).returning();
 }
 
-export async function selectIncomes() {
+export async function dbSelectAllIncomes() {
   return db.select().from(income);
 }
 
-export async function removeRow(id: Income['id']) {
+export async function dbRemoveIncome(id: Income['id']) {
   return await db.delete(income).where(eq(income.id, id)).returning();
 }

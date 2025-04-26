@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { Outlet, createRootRoute, HeadContent, Scripts, Link } from '@tanstack/react-router';
 import appCss from '../styles/app.css?url';
 
@@ -38,6 +38,7 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <html>
       <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js" />
         <HeadContent />
       </head>
       <body>

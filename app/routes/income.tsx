@@ -2,41 +2,39 @@ import type { Income } from '../types';
 import { columns } from '../components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '../components/datatable';
-import { FormEvent, useMemo, useState } from 'react';
-import { Button } from '../components/ui/button';
-import { selectIncomes, insertIncome, removeRow } from '../db';
+import { FormEvent, useState } from 'react';
+import { dbSelectAllIncomes, dbInsertIncome, dbRemoveIncome } from '../db';
 import { createServerFn } from '@tanstack/react-start';
-import { Trash2 } from 'lucide-react';
+import { AddIncome } from '../components/add-income';
 
 const addIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
   .handler(async ({ data }) => {
-    await insertIncome(data);
+    await dbInsertIncome(data);
   });
 
-const getIncome = createServerFn({ method: 'GET' }).handler(async () => {
-  return await selectIncomes();
+const getAllIncomes = createServerFn({ method: 'GET' }).handler(async () => {
+  return await dbSelectAllIncomes();
 });
 
 const removeIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income['id']) => d)
   .handler(async ({ data }) => {
-    return await removeRow(data);
+    return await dbRemoveIncome(data);
   });
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
-  loader: () => {
-    return getIncome();
+  loader: async () => {
+    return await getAllIncomes();
   },
 });
 
 function RouteComponent() {
   const income = Route.useLoaderData();
   const [data, setData] = useState<Income[]>(income);
-  const [showForm, setShowForm] = useState(false);
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const onSubmitIncome = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -56,39 +54,34 @@ function RouteComponent() {
       date: new Date(date),
       amount: Number(amount),
     };
+    try {
+      await addIncome({ data: newIncome });
+      setData([...data, newIncome]);
 
-    addIncome({ data: newIncome });
-    setData([...data, newIncome]);
-
-    form.reset();
-  };
-
-  const onDelete = async (id: Income['id']) => {
-    if (!id) return;
-
-    const removedIncome = await removeIncome({ data: id });
-    if (removedIncome) {
-      setData(data.filter((income) => income.id !== id));
+      form.reset();
+    } catch (error) {
+      console.error('Failed to add income:', error);
     }
   };
 
-  const dataTableColumns = columns({ onDelete });
+  const deleteIncome = async (id: Income['id']) => {
+    if (!id) return;
+
+    try {
+      const removedIncome = await removeIncome({ data: id });
+      if (removedIncome) {
+        setData(data.filter((income) => income.id !== id));
+      }
+    } catch (error) {
+      console.error('Failed to delete income:', error);
+    }
+  };
+
+  const dataTableColumns = columns({ onDelete: deleteIncome });
 
   return (
     <div className="container">
-      <div>
-        <Button onClick={() => setShowForm(!showForm)} className="cursor-pointer">
-          {!showForm ? 'Add an income' : 'Hide the form'}
-        </Button>
-      </div>
-      {showForm && (
-        <form method="post" onSubmit={onSubmit} className="flex gap-4 items-center">
-          <input type="text" id="from" name="from" placeholder="from" />
-          <input type="date" id="date" name="date" placeholder="date" />
-          <input type="number" id="amount" name="amount" placeholder="amount" />
-          <Button className="cursor-pointer">Add</Button>
-        </form>
-      )}
+      <AddIncome onSubmit={onSubmitIncome} />
       <DataTable columns={dataTableColumns} data={data} />
     </div>
   );
