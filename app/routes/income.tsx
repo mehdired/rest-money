@@ -13,7 +13,6 @@ export const Route = createFileRoute('/income')({
 
 function RouteComponent() {
   const income = Route.useLoaderData();
-  const [data, setData] = useState<Income[]>(income);
 
   const onSubmitIncome = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -37,7 +36,6 @@ function RouteComponent() {
     };
     try {
       await addIncome({ data: newIncome });
-      setData([...data, newIncome]);
 
       form.reset();
     } catch (error) {
@@ -49,10 +47,7 @@ function RouteComponent() {
     if (!id) return;
 
     try {
-      const removedIncome = await removeIncome({ data: id });
-      if (removedIncome) {
-        setData(data.filter((income) => income.id !== id));
-      }
+      await removeIncome({ data: id });
     } catch (error) {
       console.error('Failed to delete income:', error);
     }
@@ -63,7 +58,7 @@ function RouteComponent() {
   return (
     <div className="container">
       <AddIncome onSubmit={onSubmitIncome} />
-      <DataTable columns={dataTableColumns} data={data} />
+      <DataTable columns={dataTableColumns} data={income} />
     </div>
   );
 }
