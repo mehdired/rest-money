@@ -8,22 +8,17 @@ import {
   TableHeader,
   TableRow,
 } from '../components/ui/table';
+import { Income } from '@/types';
 
 type DataTableProps<TData, TValue> = {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
-  defaultColumn?: Partial<ColumnDef<TData>>;
 };
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-  defaultColumn,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ data, columns }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    defaultColumn,
     getCoreRowModel: getCoreRowModel(),
   });
 
@@ -44,7 +39,7 @@ export function DataTable<TData, TValue>({
       </TableHeader>
       <TableBody>
         {table.getRowModel().rows.map((row, index) => (
-          <TableRow key={row.id} className={index % 2 === 0 ? 'bg-main' : ''}>
+          <TableRow key={row.id} className={index % 2 === 0 ? 'bg-background' : ''}>
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

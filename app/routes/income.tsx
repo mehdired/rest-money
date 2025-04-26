@@ -2,10 +2,11 @@ import type { Income } from '../types';
 import { columns } from '../components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '../components/datatable';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { Button } from '../components/ui/button';
-import { selectIncomes, insertIncome } from '../db';
+import { selectIncomes, insertIncome, removeRow } from '../db';
 import { createServerFn } from '@tanstack/react-start';
+import { Trash2 } from 'lucide-react';
 
 const addIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
@@ -16,6 +17,12 @@ const addIncome = createServerFn({ method: 'POST', response: 'data' })
 const getIncome = createServerFn({ method: 'GET' }).handler(async () => {
   return await selectIncomes();
 });
+
+const removeIncome = createServerFn({ method: 'POST', response: 'data' })
+  .validator((d: Income['id']) => d)
+  .handler(async ({ data }) => {
+    return await removeRow(data);
+  });
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
@@ -56,6 +63,17 @@ function RouteComponent() {
     form.reset();
   };
 
+  const onDelete = async (id: Income['id']) => {
+    if (!id) return;
+
+    const removedIncome = await removeIncome({ data: id });
+    if (removedIncome) {
+      setData(data.filter((income) => income.id !== id));
+    }
+  };
+
+  const dataTableColumns = columns({ onDelete });
+
   return (
     <div className="container">
       <div>
@@ -71,7 +89,7 @@ function RouteComponent() {
           <Button className="cursor-pointer">Add</Button>
         </form>
       )}
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={dataTableColumns} data={data} />
     </div>
   );
 }

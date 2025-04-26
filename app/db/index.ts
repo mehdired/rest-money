@@ -2,6 +2,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client/node';
 import { Income } from '../types';
 import { income } from './schema';
+import { eq } from 'drizzle-orm';
 
 const client = createClient({
   url: 'file:./app/db/data/local.db',
@@ -9,10 +10,14 @@ const client = createClient({
 
 export const db = drizzle({ client });
 
-export function insertIncome(data: Income) {
-  return db.insert(income).values(data).returning();
+export async function insertIncome(data: Income) {
+  return await db.insert(income).values(data).returning();
 }
 
-export function selectIncomes(): Promise<Income[]> {
+export async function selectIncomes() {
   return db.select().from(income);
+}
+
+export async function removeRow(id: Income['id']) {
+  return await db.delete(income).where(eq(income.id, id)).returning();
 }

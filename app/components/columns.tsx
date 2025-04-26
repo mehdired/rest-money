@@ -1,22 +1,14 @@
 import { ColumnDef } from '@tanstack/react-table';
 import type { Income } from '../types';
 import React from 'react';
+import { Trash2 } from 'lucide-react';
+import { Button } from './ui/button';
 
-export const defaultColumn: Partial<ColumnDef<Income>> = {
-  cell: function Cell({ getValue }) {
-    const initialValue = getValue();
+export interface ColumnsProps {
+  onDelete: (id: Income['id']) => void;
+}
 
-    const [value, setValue] = React.useState(initialValue);
-
-    React.useEffect(() => {
-      setValue(initialValue);
-    }, [initialValue]);
-
-    return <input value={value as string} onChange={(event) => setValue(event.target.value)} />;
-  },
-};
-
-export const columns: ColumnDef<Income>[] = [
+export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Income>[] => [
   {
     accessorKey: 'from',
     header: 'From',
@@ -39,6 +31,17 @@ export const columns: ColumnDef<Income>[] = [
         currency: 'EUR',
       });
       return <span>{formatedAmount}</span>;
+    },
+  },
+  {
+    accessorKey: 'action',
+    header: '',
+    cell: ({ row }) => {
+      return (
+        <Button className="cursor-pointer" onClick={() => onDelete(row.original.id)}>
+          <Trash2 />
+        </Button>
+      );
     },
   },
 ];
