@@ -5,14 +5,25 @@ import { DataTable } from '../components/datatable';
 import { FormEvent, useState } from 'react';
 import { getAllIncomes, addIncome, removeIncome } from '../db';
 import { AddIncome } from '../components/add-income';
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/income')({
   component: RouteComponent,
-  loader: async () => await getAllIncomes(),
 });
 
 function RouteComponent() {
-  const income = Route.useLoaderData();
+  const queryClient = useQueryClient();
+  const { data: incomes } = useSuspenseQuery({
+    queryKey: ['incomes'],
+    queryFn: getAllIncomes,
+  });
+
+  const mutation = useMutation({
+    mutationFn: addIncome,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['incomes'] });
+    },
+  });
 
   const onSubmitIncome = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -35,7 +46,7 @@ function RouteComponent() {
       amount: Number(amount),
     };
     try {
-      await addIncome({ data: newIncome });
+      mutation.mutate({ data: newIncome });
 
       form.reset();
     } catch (error) {
@@ -58,7 +69,7 @@ function RouteComponent() {
   return (
     <div className="container">
       <AddIncome onSubmit={onSubmitIncome} />
-      <DataTable columns={dataTableColumns} data={income} />
+      <DataTable columns={dataTableColumns} data={incomes} />
     </div>
   );
 }

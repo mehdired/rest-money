@@ -1,8 +1,20 @@
 import { type ReactNode } from 'react';
-import { Outlet, createRootRoute, HeadContent, Scripts, Link } from '@tanstack/react-router';
+import {
+  Outlet,
+  HeadContent,
+  Scripts,
+  Link,
+  createRootRouteWithContext,
+} from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import appCss from '../styles/app.css?url';
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     links: [
       {
@@ -53,6 +65,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           </nav>
         </header>
         {children}
+        <ReactQueryDevtools buttonPosition="bottom-left" />
+        <TanStackRouterDevtools position="bottom-right" />
         <Scripts />
       </body>
     </html>
