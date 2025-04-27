@@ -1,6 +1,6 @@
 import { getAllIncomes } from '../db';
 import { createFileRoute } from '@tanstack/react-router';
-import { amountAfterAllTaxes, amountAfterTaxes, amountAfterTVA, amountAfterUrssaf } from '../utils';
+import { amountAfterAllTaxes, amountAfterTaxes, amountAfterUrssaf } from '../utils';
 
 export const Route = createFileRoute('/')({
   component: Index,
