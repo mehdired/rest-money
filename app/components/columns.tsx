@@ -3,6 +3,7 @@ import type { Income } from '../types';
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
+import { formatCurrency } from '@/utils';
 
 export interface ColumnsProps {
   onDelete: (id: Income['id']) => void;
@@ -26,11 +27,8 @@ export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Income>[] => [
     header: 'Amount',
     cell: ({ row }) => {
       const amount = row.getValue('amount') as Income['amount'];
-      const formatedAmount = amount.toLocaleString('fr-FR', {
-        style: 'currency',
-        currency: 'EUR',
-      });
-      return <span>{formatedAmount}</span>;
+
+      return <span>{formatCurrency(amount)}</span>;
     },
   },
   {

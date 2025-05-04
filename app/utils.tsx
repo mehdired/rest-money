@@ -1,20 +1,12 @@
 type CalculMode = 'rest' | 'to';
 
-export const amountAfterUrssaf = (amount: number, mode: CalculMode = 'rest') => {
+export const calculateUrssaf = (amount: number) => {
   const urssafPerc = 0.23;
-  const coef = mode === 'rest' ? 1 - urssafPerc : urssafPerc;
 
-  return (amount - amountAfterTVA(amount, 'to')) * coef;
+  return amount * urssafPerc;
 };
 
-export const amountAfterTVA = (amount: number, mode: CalculMode = 'rest') => {
-  const tvaPerc = 0.2;
-  const coef = mode === 'rest' ? 1 - tvaPerc : tvaPerc;
-
-  return amount * coef;
-};
-
-export const amountAfterTaxes = (amount: number, mode: CalculMode = 'rest') => {
+export const calculateTaxes = (amount: number) => {
   const abattement = 0.34;
   const taxableAmount = amount * (1 - abattement);
 
@@ -35,11 +27,19 @@ export const amountAfterTaxes = (amount: number, mode: CalculMode = 'rest') => {
     }
   }
 
-  return mode === 'rest' ? amount - taxAmount : taxAmount;
+  return taxAmount;
 };
 
-export const amountAfterAllTaxes = (amount: number, mode: 'rest' | 'to' = 'rest') => {
-  const amountTaxes = amountAfterUrssaf(amount, 'to') + amountAfterTaxes(amount, 'to');
-
-  return mode === 'rest' ? amount - amountTaxes : amountTaxes;
-};
+export function formatCurrency(
+  amount: number | null | undefined,
+  currency = 'EUR',
+  locale = 'fr-FR'
+): string {
+  if (amount === null || amount === undefined) {
+    return ''; // Ou retourner '0,00 €' ou une autre valeur par défaut
+  }
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
+}

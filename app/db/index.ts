@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client/node';
-import { Income } from '../types';
+import { Income } from '@/types';
 import { income } from './schema';
 import { eq } from 'drizzle-orm';
 import { createServerFn } from '@tanstack/react-start';

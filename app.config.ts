@@ -1,7 +1,7 @@
 import { defineConfig } from '@tanstack/react-start/config';
+import path from 'path';
 import tsConfigPaths from 'vite-tsconfig-paths';
 
-// https://vite.dev/config/
 export default defineConfig({
   vite: {
     plugins: [
@@ -11,7 +11,7 @@ export default defineConfig({
     ],
     resolve: {
       alias: {
-        '@': './app',
+        '@': path.resolve(path.dirname('./'), './app'),
       },
     },
   },
