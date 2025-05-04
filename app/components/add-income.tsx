@@ -1,6 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from './ui/input';
 
 interface AddIncomeProps {
   onSubmit: (event: FormEvent<HTMLFormElement>) => void;
@@ -19,24 +20,9 @@ export function AddIncome({ onSubmit }: AddIncomeProps) {
       </DialogTrigger>
       <DialogContent className="bg-white p-10">
         <form method="post" onSubmit={onSubmit} className="flex flex-col gap-4 items-center">
-          <input
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            type="text"
-            id="from"
-            name="from"
-            placeholder="Source (e.g., Client A)"
-            required
-          />
-          <input
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            type="date"
-            id="date"
-            name="date"
-            placeholder="Date"
-            required
-          />
-          <input
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          <Input type="text" id="from" name="from" placeholder="Source (e.g., Client A)" required />
+          <Input type="date" id="date" name="date" placeholder="Date" required />
+          <Input
             value={inputValue}
             onChange={(event) => {
               setInputValue(event.currentTarget.value);

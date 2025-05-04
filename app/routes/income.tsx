@@ -2,7 +2,7 @@ import type { Income } from '@/types';
 import { columns } from '@/components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '@/components/datatable';
-import { FormEvent } from 'react';
+import { type FormEvent } from 'react';
 import { allIncomesQueryOptions, addIncome, removeIncome } from '../db';
 import { AddIncome } from '@/components/add-income';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
@@ -29,7 +29,7 @@ function Incomes() {
     },
   });
 
-  const onSubmitIncome = async (event: FormEvent<HTMLFormElement>) => {
+  const onSubmitIncome = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const form = event.currentTarget;
@@ -62,8 +62,6 @@ function Incomes() {
     };
 
     try {
-      // Pass the correct structure expected by the server function
-      // Wrap the income object in { data: ... }
       addMutation.mutate({ data: newIncome });
 
       form.reset();

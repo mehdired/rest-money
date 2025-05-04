@@ -11,10 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SettingsImport } from './routes/settings'
 import { Route as IncomeImport } from './routes/income'
 import { Route as IndexImport } from './routes/index'
 
 // Create/Update Routes
+
+const SettingsRoute = SettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IncomeRoute = IncomeImport.update({
   id: '/income',
@@ -46,6 +53,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IncomeImport
       parentRoute: typeof rootRoute
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -54,36 +68,41 @@ declare module '@tanstack/react-router' {
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/income': typeof IncomeRoute
+  '/settings': typeof SettingsRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/income': typeof IncomeRoute
+  '/settings': typeof SettingsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/income': typeof IncomeRoute
+  '/settings': typeof SettingsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/income'
+  fullPaths: '/' | '/income' | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/income'
-  id: '__root__' | '/' | '/income'
+  to: '/' | '/income' | '/settings'
+  id: '__root__' | '/' | '/income' | '/settings'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   IncomeRoute: typeof IncomeRoute
+  SettingsRoute: typeof SettingsRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   IncomeRoute: IncomeRoute,
+  SettingsRoute: SettingsRoute,
 }
 
 export const routeTree = rootRoute
@@ -97,7 +116,8 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/income"
+        "/income",
+        "/settings"
       ]
     },
     "/": {
@@ -105,6 +125,9 @@ export const routeTree = rootRoute
     },
     "/income": {
       "filePath": "income.tsx"
+    },
+    "/settings": {
+      "filePath": "settings.tsx"
     }
   }
 }

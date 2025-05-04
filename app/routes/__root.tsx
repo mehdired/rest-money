@@ -62,6 +62,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <Link to="/income" className="[&.active]:font-bold [&.active]:cursor-auto">
               Income
             </Link>
+            <Link to="/settings" className="[&.active]:font-bold [&.active]:cursor-auto">
+              Settings
+            </Link>
           </nav>
         </header>
         {children}

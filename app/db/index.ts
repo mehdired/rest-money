@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client/node';
-import { Income } from '@/types';
-import { income } from './schema';
+import { Income, Settings } from '@/types';
+import { income, settings } from './schema';
 import { eq } from 'drizzle-orm';
 import { createServerFn } from '@tanstack/react-start';
 import { queryOptions } from '@tanstack/react-query';
@@ -22,6 +22,10 @@ async function dbSelectAllIncomes() {
 
 async function dbRemoveIncome(id: Income['id']) {
   return await db.delete(income).where(eq(income.id, id)).returning();
+}
+
+function dbSaveSettings(data: Settings) {
+  return db.insert(settings).values(data);
 }
 
 export const addIncome = createServerFn({ method: 'POST', response: 'data' })
