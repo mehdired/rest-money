@@ -19,7 +19,8 @@ export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Income>[] => [
     header: 'Date',
     cell: ({ row }) => {
       const date = row.getValue('date') as Income['date'];
-      return <span>{date.toLocaleDateString('fr-FR')}</span>;
+      // Translate date format locale
+      return <span>{date.toLocaleDateString('en-US')}</span>;
     },
   },
   {
@@ -35,9 +36,16 @@ export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Income>[] => [
     accessorKey: 'action',
     header: '',
     cell: ({ row }) => {
+      const income = row.original;
+
       return (
-        <Button className="cursor-pointer" onClick={() => onDelete(row.original.id)}>
-          <Trash2 />
+        <Button
+          // Removed variant="ghost" as it caused a type error
+          size="icon"
+          onClick={() => onDelete(income.id)}
+          aria-label="Delete income" // Add accessible label
+        >
+          <Trash2 className="h-4 w-4 text-red-500" />
         </Button>
       );
     },

@@ -2,21 +2,18 @@ import type { Income } from '@/types';
 import { columns } from '@/components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '@/components/datatable';
-import { FormEvent, useState } from 'react';
-import { getAllIncomes, addIncome, removeIncome } from '../db';
+import { FormEvent } from 'react';
+import { allIncomesQueryOptions, addIncome, removeIncome } from '../db';
 import { AddIncome } from '@/components/add-income';
-import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/income')({
-  component: RouteComponent,
+  component: Incomes,
 });
 
-function RouteComponent() {
+function Incomes() {
   const queryClient = useQueryClient();
-  const { data: incomes } = useSuspenseQuery({
-    queryKey: ['incomes'],
-    queryFn: getAllIncomes,
-  });
+  const { data: incomes } = useSuspenseQuery(allIncomesQueryOptions);
 
   const addMutation = useMutation({
     mutationFn: addIncome,
@@ -40,10 +37,20 @@ function RouteComponent() {
 
     const from = formData.get('from') as string;
     const date = formData.get('date') as string;
-    const amount = formData.get('netAmount');
+    // Corrected to get 'amount' which is the name of the input field
+    const amountString = formData.get('amount') as string;
 
-    if (!from || !date || !amount) {
-      alert('Tous les champs sont obligatoire');
+    // Translate alert message
+    if (!from || !date || !amountString) {
+      alert('All fields are required');
+      return;
+    }
+
+    // Convert amount string to number
+    const amount = parseFloat(amountString);
+
+    if (isNaN(amount)) {
+      alert('Invalid amount entered.'); // Add validation for number conversion
       return;
     }
 
@@ -51,10 +58,12 @@ function RouteComponent() {
       id: crypto.randomUUID(),
       from: from,
       date: new Date(date),
-      amount: Number(amount),
+      amount: amount, // Use the parsed number
     };
 
     try {
+      // Pass the correct structure expected by the server function
+      // Wrap the income object in { data: ... }
       addMutation.mutate({ data: newIncome });
 
       form.reset();
@@ -67,6 +76,8 @@ function RouteComponent() {
     if (!id) return;
 
     try {
+      // Pass the correct structure expected by the server function
+      // Wrap the id in { data: ... }
       deleteMutation.mutate({ data: id });
     } catch (error) {
       console.error('Failed to delete income:', error);

@@ -9,16 +9,34 @@ interface AddIncomeProps {
 export function AddIncome({ onSubmit }: AddIncomeProps) {
   const [inputValue, setInputValue] = useState('');
 
+  const calculatedValue = parseFloat(inputValue || '0') * 0.8;
+  const displayCalculatedValue = !isNaN(calculatedValue) ? calculatedValue.toFixed(2) : '';
+
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button className="cursor-pointer">Add an income</Button>
       </DialogTrigger>
-      <DialogContent className="bg-white">
+      <DialogContent className="bg-white p-10">
         <form method="post" onSubmit={onSubmit} className="flex flex-col gap-4 items-center">
-          <input type="text" id="from" name="from" placeholder="from" />
-          <input type="date" id="date" name="date" placeholder="date" />
           <input
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            type="text"
+            id="from"
+            name="from"
+            placeholder="Source (e.g., Client A)"
+            required
+          />
+          <input
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            type="date"
+            id="date"
+            name="date"
+            placeholder="Date"
+            required
+          />
+          <input
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             value={inputValue}
             onChange={(event) => {
               setInputValue(event.currentTarget.value);
@@ -26,16 +44,27 @@ export function AddIncome({ onSubmit }: AddIncomeProps) {
             type="text"
             id="grossAmount"
             name="grossAmount"
-            placeholder="0"
+            placeholder="Gross Amount"
+            required
           />
-          <input
-            type="text"
-            id="netAmount"
-            name="netAmount"
-            readOnly
-            value={inputValue ? (parseFloat(inputValue) * 0.8).toFixed(2) : 0}
-          />
-          <Button className="cursor-pointer">Add</Button>
+          {inputValue && !isNaN(parseFloat(inputValue)) && (
+            <div className="w-full">
+              <label htmlFor="amountNet" className="text-sm text-muted-foreground">
+                Net TVA
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                type="text"
+                id="netAmount"
+                name="netAmount"
+                readOnly
+                value={displayCalculatedValue}
+              />
+            </div>
+          )}
+          <Button type="submit" className="cursor-pointer w-full">
+            Add
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

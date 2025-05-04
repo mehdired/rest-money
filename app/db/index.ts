@@ -4,6 +4,7 @@ import { Income } from '@/types';
 import { income } from './schema';
 import { eq } from 'drizzle-orm';
 import { createServerFn } from '@tanstack/react-start';
+import { queryOptions } from '@tanstack/react-query';
 
 const client = createClient({
   url: 'file:./app/db/data/local.db',
@@ -31,6 +32,11 @@ export const addIncome = createServerFn({ method: 'POST', response: 'data' })
 
 export const getAllIncomes = createServerFn({ method: 'GET' }).handler(async () => {
   return await dbSelectAllIncomes();
+});
+
+export const allIncomesQueryOptions = queryOptions({
+  queryKey: ['incomes'],
+  queryFn: getAllIncomes,
 });
 
 export const removeIncome = createServerFn({ method: 'POST', response: 'data' })

@@ -1,42 +1,52 @@
-type CalculMode = 'rest' | 'to';
-
-export const calculateUrssaf = (amount: number) => {
-  const urssafPerc = 0.23;
+export const calculateUrssaf = (amount: number): number => {
+  const urssafPerc = 0.23; // 23% URSSAF rate (example)
 
   return amount * urssafPerc;
 };
 
-export const calculateTaxes = (amount: number) => {
-  const abattement = 0.34;
-  const taxableAmount = amount * (1 - abattement);
+// Renamed function for clarity and consistency
+export const calculateTaxes = (amount: number): number => {
+  // Assuming 'amount' is the gross income *before* URSSAF deduction
+  // If taxes are calculated *after* URSSAF, adjust the input to this function
 
+  // Abattement forfaitaire pour frais professionnels (example for micro-entreprise BNC)
+  const abattement = 0.34; // 34% allowance
+  const incomeAfterUrssaf = amount - calculateUrssaf(amount); // Calculate income after social contributions
+  const taxableAmount = incomeAfterUrssaf * (1 - abattement); // Apply allowance
+
+  // Progressive income tax brackets (example for 2024 rates for one part)
+  // These should be updated yearly and adjusted based on the user's situation (parts fiscales, etc.)
   const brackets = [
-    { min: 0, max: 11497, rate: 0 },
-    { min: 11497, max: 29315, rate: 0.11 },
-    { min: 29315, max: 83823, rate: 0.3 },
-    { min: 83823, max: 180294, rate: 0.41 },
-    { min: 180294, max: Infinity, rate: 0.45 },
+    { min: 0, max: 11294, rate: 0 }, // Up to €11,294
+    { min: 11294, max: 28797, rate: 0.11 }, // €11,294 to €28,797
+    { min: 28797, max: 82341, rate: 0.3 }, // €28,797 to €82,341
+    { min: 82341, max: 177106, rate: 0.41 }, // €82,341 to €177,106
+    { min: 177106, max: Infinity, rate: 0.45 }, // Above €177,106
   ];
 
   let taxAmount = 0;
 
   for (const bracket of brackets) {
     if (taxableAmount > bracket.min) {
-      const taxable = Math.min(taxableAmount, bracket.max) - bracket.min;
-      taxAmount += taxable * bracket.rate;
+      // Calculate the portion of income within this bracket
+      const taxableInBracket = Math.min(taxableAmount, bracket.max) - bracket.min;
+      // Add the tax for this portion
+      taxAmount += taxableInBracket * bracket.rate;
     }
   }
 
+  // This is a simplified calculation. Real income tax depends on many factors.
   return taxAmount;
 };
 
 export function formatCurrency(
   amount: number | null | undefined,
   currency = 'EUR',
+  // Keep locale as fr-FR for currency formatting unless specifically requested otherwise
   locale = 'fr-FR'
 ): string {
   if (amount === null || amount === undefined) {
-    return ''; // Ou retourner '0,00 €' ou une autre valeur par défaut
+    return ''; // Or return '0,00 €' or another default value
   }
   return new Intl.NumberFormat(locale, {
     style: 'currency',
