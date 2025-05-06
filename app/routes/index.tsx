@@ -1,4 +1,4 @@
-import { allIncomesQueryOptions } from '../db';
+import { allIncomesQueryOptions, getAllIncomes } from '../db';
 import { createFileRoute } from '@tanstack/react-router';
 import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
@@ -7,6 +7,9 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 
 export const Route = createFileRoute('/')({
   component: Index,
+  loader: async ({ context }) => {
+    return await context.queryClient.ensureQueryData(allIncomesQueryOptions);
+  },
 });
 
 // Colors for the chart (you can customize them)
@@ -18,6 +21,7 @@ const COLORS = {
 
 function Index() {
   const { data: allIncomes } = useSuspenseQuery(allIncomesQueryOptions);
+
   const totalGross = allIncomes.reduce((acc, income) => acc + income.amount, 0);
   const totalUrssaf = allIncomes.reduce((acc, income) => acc + calculateUrssaf(income.amount), 0);
   const totalImpot = allIncomes.reduce((acc, income) => acc + calculateTaxes(income.amount), 0);

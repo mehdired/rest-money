@@ -8,6 +8,6 @@ export const income = sqliteTable('income', {
 });
 
 export const settings = sqliteTable('settings', {
-  tva: integer(),
-  urssaf: integer(),
+  name: text().primaryKey().unique(),
+  value: text(),
 });

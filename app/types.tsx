@@ -6,6 +6,6 @@ export interface Income {
 }
 
 export interface Settings {
-  urssaf: number;
-  tva: number;
+  name: string;
+  value: string;
 }

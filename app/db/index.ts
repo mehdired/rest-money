@@ -10,22 +10,26 @@ const client = createClient({
   url: 'file:./app/db/data/local.db',
 });
 
-const db = drizzle({ client });
+const db = drizzle({
+  connection: {
+    url: 'file:./app/db/data/local.db',
+  },
+});
 
 async function dbInsertIncome(data: Income) {
   return await db.insert(income).values(data).returning();
 }
 
 async function dbSelectAllIncomes() {
-  return db.select().from(income);
+  return await db.select().from(income);
 }
 
 async function dbRemoveIncome(id: Income['id']) {
   return await db.delete(income).where(eq(income.id, id)).returning();
 }
 
-function dbSaveSettings(data: Settings) {
-  return db.insert(settings).values(data);
+export async function dbSaveSettings(data: Settings[]) {
+  return await db.insert(settings).values(data);
 }
 
 export const addIncome = createServerFn({ method: 'POST', response: 'data' })

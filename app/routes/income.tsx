@@ -9,6 +9,9 @@ import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-q
 
 export const Route = createFileRoute('/income')({
   component: Incomes,
+  loader: async ({ context }) => {
+    return await context.queryClient.ensureQueryData(allIncomesQueryOptions);
+  },
 });
 
 function Incomes() {
