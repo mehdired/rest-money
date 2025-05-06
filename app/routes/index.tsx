@@ -1,4 +1,4 @@
-import { allIncomesQueryOptions, getAllIncomes } from '../db';
+import { allIncomesQueryOptions } from '../db';
 import { createFileRoute } from '@tanstack/react-router';
 import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';

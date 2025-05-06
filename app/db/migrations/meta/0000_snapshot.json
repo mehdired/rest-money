@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "dfb54d03-3c14-4473-aa86-cd6f89d4c477",
+  "id": "eb2a3729-f347-43c0-ae48-51bca8f19ff7",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "income": {
@@ -36,7 +36,47 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "income_id_unique": {
+          "name": "income_id_unique",
+          "columns": [
+            "id"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "settings": {
+      "name": "settings",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "settings_name_unique": {
+          "name": "settings_name_unique",
+          "columns": [
+            "name"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

@@ -11,9 +11,7 @@ const client = createClient({
 });
 
 const db = drizzle({
-  connection: {
-    url: 'file:./app/db/data/local.db',
-  },
+  client,
 });
 
 async function dbInsertIncome(data: Income) {
@@ -28,9 +26,32 @@ async function dbRemoveIncome(id: Income['id']) {
   return await db.delete(income).where(eq(income.id, id)).returning();
 }
 
-export async function dbSaveSettings(data: Settings[]) {
-  return await db.insert(settings).values(data);
+async function dbSaveSettings(data: Settings) {
+  return await db
+    .update(settings)
+    .set({ value: data.value })
+    .where(eq(settings.name, data.name))
+    .returning();
 }
+
+async function dbGetSettings() {
+  return await db.select().from(settings);
+}
+
+export const srFnGetSettings = createServerFn({ method: 'POST', response: 'data' }).handler(
+  async () => dbGetSettings()
+);
+
+export const getSettingsQueryOptions = queryOptions({
+  queryKey: ['settings'],
+  queryFn: srFnGetSettings,
+});
+
+export const insertSettings = createServerFn({ method: 'POST', response: 'data' })
+  .validator((d: Settings) => d)
+  .handler(async ({ data }) => {
+    await dbSaveSettings(data);
+  });
 
 export const addIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
@@ -38,9 +59,9 @@ export const addIncome = createServerFn({ method: 'POST', response: 'data' })
     await dbInsertIncome(data);
   });
 
-export const getAllIncomes = createServerFn({ method: 'GET' }).handler(async () => {
-  return await dbSelectAllIncomes();
-});
+const getAllIncomes = createServerFn({ method: 'GET' }).handler(
+  async () => await dbSelectAllIncomes()
+);
 
 export const allIncomesQueryOptions = queryOptions({
   queryKey: ['incomes'],
