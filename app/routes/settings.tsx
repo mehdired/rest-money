@@ -3,11 +3,29 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { LoaderCircle } from 'lucide-react';
-import { insertSettings, getSettingsQueryOptions } from '@/db';
+import { dbSaveSettings, dbGetSettings } from '@/db';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { type FormEvent } from 'react';
-import { resolve } from 'path';
+
+import { createServerFn } from '@tanstack/react-start';
+import { queryOptions } from '@tanstack/react-query';
+import { Settings } from '@/types';
+
+const getSettingsFn = createServerFn({ method: 'POST', response: 'data' }).handler(async () =>
+  dbGetSettings()
+);
+
+export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
+  .validator((d: Settings) => d)
+  .handler(async ({ data }) => {
+    await dbSaveSettings(data);
+  });
+
+const getSettingsQueryOptions = queryOptions({
+  queryKey: ['settings'],
+  queryFn: getSettingsFn,
+});
 
 export const Route = createFileRoute('/settings')({
   component: RouteComponent,
@@ -21,7 +39,7 @@ function RouteComponent() {
   const { data: allSettings } = useSuspenseQuery(getSettingsQueryOptions);
 
   const mutation = useMutation({
-    mutationFn: insertSettings,
+    mutationFn: saveSettingsFn,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['settings'] });
     },

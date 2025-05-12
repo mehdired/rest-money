@@ -1,6 +1,5 @@
 import { ColumnDef } from '@tanstack/react-table';
 import type { Income } from '../types';
-import React from 'react';
 import { Trash2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { formatCurrency } from '@/utils';
@@ -40,7 +39,7 @@ export const columns = ({ onDelete }: ColumnsProps): ColumnDef<Income>[] => [
 
       return (
         <Button
-          // Removed variant="ghost" as it caused a type error
+          className=" bg-white"
           size="icon"
           onClick={() => onDelete(income.id)}
           aria-label="Delete income" // Add accessible label

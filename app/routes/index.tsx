@@ -1,9 +1,19 @@
-import { allIncomesQueryOptions } from '../db';
 import { createFileRoute } from '@tanstack/react-router';
 import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { createServerFn } from '@tanstack/react-start';
+import { dbSelectAllIncomes } from '@/db';
+
+const getAllIncomes = createServerFn({ method: 'GET' }).handler(
+  async () => await dbSelectAllIncomes()
+);
+
+export const allIncomesQueryOptions = queryOptions({
+  queryKey: ['incomes'],
+  queryFn: getAllIncomes,
+});
 
 export const Route = createFileRoute('/')({
   component: Index,

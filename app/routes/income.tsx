@@ -2,10 +2,17 @@ import type { Income } from '@/types';
 import { columns } from '@/components/columns';
 import { createFileRoute } from '@tanstack/react-router';
 import { DataTable } from '@/components/datatable';
-import { type FormEvent } from 'react';
-import { allIncomesQueryOptions, addIncome, removeIncome } from '../db';
+import { dbRemoveIncome } from '../db';
 import { AddIncome } from '@/components/add-income';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
+import { createServerFn } from '@tanstack/react-start';
+import { allIncomesQueryOptions } from './index';
+
+const removeIncome = createServerFn({ method: 'POST', response: 'data' })
+  .validator((d: Income['id']) => d)
+  .handler(async ({ data }) => {
+    return await dbRemoveIncome(data);
+  });
 
 export const Route = createFileRoute('/income')({
   component: Incomes,
@@ -18,60 +25,12 @@ function Incomes() {
   const queryClient = useQueryClient();
   const { data: incomes } = useSuspenseQuery(allIncomesQueryOptions);
 
-  const addMutation = useMutation({
-    mutationFn: addIncome,
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['incomes'] });
-    },
-  });
-
   const deleteMutation = useMutation({
     mutationFn: removeIncome,
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['incomes'] });
     },
   });
-
-  const onSubmitIncome = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-
-    const from = formData.get('from') as string;
-    const date = formData.get('date') as string;
-    // Corrected to get 'amount' which is the name of the input field
-    const amountString = formData.get('amount') as string;
-
-    // Translate alert message
-    if (!from || !date || !amountString) {
-      alert('All fields are required');
-      return;
-    }
-
-    // Convert amount string to number
-    const amount = parseFloat(amountString);
-
-    if (isNaN(amount)) {
-      alert('Invalid amount entered.'); // Add validation for number conversion
-      return;
-    }
-
-    const newIncome = {
-      id: crypto.randomUUID(),
-      from: from,
-      date: new Date(date),
-      amount: amount, // Use the parsed number
-    };
-
-    try {
-      addMutation.mutate({ data: newIncome });
-
-      form.reset();
-    } catch (error) {
-      console.error('Failed to add income:', error);
-    }
-  };
 
   const deleteIncome = async (id: Income['id']) => {
     if (!id) return;
@@ -89,7 +48,7 @@ function Incomes() {
 
   return (
     <div className="container">
-      <AddIncome onSubmit={onSubmitIncome} />
+      <AddIncome />
       <DataTable columns={dataTableColumns} data={incomes} />
     </div>
   );
