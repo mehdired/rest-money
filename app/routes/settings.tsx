@@ -12,9 +12,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { queryOptions } from '@tanstack/react-query';
 import { Settings } from '@/types';
 
-const getSettingsFn = createServerFn({ method: 'POST', response: 'data' }).handler(async () =>
-  dbGetSettings()
-);
+const getSettingsFn = createServerFn({ method: 'POST' }).handler(async () => dbGetSettings());
 
 export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Settings) => d)
@@ -22,7 +20,7 @@ export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' 
     await dbSaveSettings(data);
   });
 
-const getSettingsQueryOptions = queryOptions({
+export const getSettingsQueryOptions = queryOptions({
   queryKey: ['settings'],
   queryFn: getSettingsFn,
 });

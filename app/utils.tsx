@@ -1,10 +1,14 @@
+import { useQuery } from '@tanstack/react-query';
+import { getSettingsQueryOptions } from './routes/settings';
+
 export const calculateUrssaf = (amount: number): number => {
-  const urssafPerc = 0.23; // 23% URSSAF rate (example)
+  const { data: allSettings } = useQuery(getSettingsQueryOptions);
+  const urssafValue = allSettings?.find((setting) => setting.name === 'urssaf');
+  const urssafPerc = Number(urssafValue?.value) / 100;
 
   return amount * urssafPerc;
 };
 
-// Renamed function for clarity and consistency
 export const calculateTaxes = (amount: number): number => {
   // Assuming 'amount' is the gross income *before* URSSAF deduction
   // If taxes are calculated *after* URSSAF, adjust the input to this function

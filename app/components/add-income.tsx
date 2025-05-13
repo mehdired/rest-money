@@ -1,13 +1,14 @@
 import { type FormEvent, useState } from 'react';
 import type { Income } from '@/types';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Input } from './ui/input';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { dbInsertIncome } from '@/db';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { dbGetSettings, dbInsertIncome } from '@/db';
 import { createServerFn } from '@tanstack/react-start';
 import { Checkbox } from './ui/checkbox';
 import { Label } from './ui/label';
+import { getSettingsQueryOptions } from '@/routes/settings';
 
 const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
@@ -17,11 +18,14 @@ const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
 
 export function AddIncome() {
   const queryClient = useQueryClient();
+  const { data: allSettings } = useQuery(getSettingsQueryOptions);
+  const tvaValue = allSettings?.find((setting) => setting.name === 'tva');
   const [inputValue, setInputValue] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const [includeTVA, setIncludeTVA] = useState(true);
 
-  const calculatedValue = parseFloat(inputValue || '0') / 1.2;
+  const calculatedValue = parseFloat(inputValue || '0') / (1 + Number(tvaValue?.value) / 100);
+  console.log(tvaValue);
   const displayCalculatedValue = !isNaN(calculatedValue) ? calculatedValue.toFixed(2) : '';
 
   const addMutation = useMutation({
@@ -86,6 +90,7 @@ export function AddIncome() {
       </Button>
 
       <DialogContent className="bg-white p-10">
+        <DialogTitle>Add an income</DialogTitle>
         <form method="post" onSubmit={onSubmitIncome} className="flex flex-col gap-4 items-center">
           <Input type="text" id="from" name="from" placeholder="Source (e.g., Client A)" required />
           <Input type="date" id="date" name="date" placeholder="Date" required />
