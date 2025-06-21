@@ -52,8 +52,8 @@ interface FormData {
   date: string;
   amount: string;
   description: string;
-  hasTVA: boolean; // Le revenu est-il soumis à la TVA ?
-  includeTVA: boolean; // Si soumis à TVA, le montant saisi inclut-il la TVA ?
+  hasTVA: boolean;
+  includeTVA: boolean;
 }
 
 interface FormErrors {
