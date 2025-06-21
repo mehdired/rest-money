@@ -1,16 +1,16 @@
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Button } from 'src/components/ui/button';
+import { Card } from 'src/components/ui/card';
+import { Input } from 'src/components/ui/input';
+import { Label } from 'src/components/ui/label';
 import { LoaderCircle } from 'lucide-react';
-import { dbSaveSettings, dbGetSettings } from '@/db';
+import { dbSaveSettings, dbGetSettings } from 'src/db';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { type FormEvent } from 'react';
 
 import { createServerFn } from '@tanstack/react-start';
 import { queryOptions } from '@tanstack/react-query';
-import { Settings } from '@/types';
+import { Settings } from 'src/types';
 
 const getSettingsFn = createServerFn({ method: 'POST' }).handler(async () => dbGetSettings());
 

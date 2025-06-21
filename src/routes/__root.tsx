@@ -1,0 +1,84 @@
+import { type ReactNode } from 'react';
+import { Outlet, HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import type { QueryClient } from '@tanstack/react-query';
+import { TrendingUp } from 'lucide-react';
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import { DesktopNav, MobileNav } from 'src/components/ui/navigation';
+import { Toaster } from 'src/components/ui/sonner';
+import appCss from '../styles/app.css?url';
+
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
+  head: () => ({
+    links: [
+      {
+        rel: 'stylesheet',
+        href: appCss,
+      },
+    ],
+    meta: [
+      {
+        charSet: 'utf-8',
+      },
+      {
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
+      },
+      {
+        title: 'Rest Money - Freelance Income Tracker',
+      },
+    ],
+  }),
+  component: RootComponent,
+});
+
+function RootComponent() {
+  return (
+    <RootDocument>
+      <Outlet />
+    </RootDocument>
+  );
+}
+
+function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  return (
+    <html>
+      <head>
+        {/* <script src="https://unpkg.com/react-scan/dist/auto.global.js" /> */}
+        <HeadContent />
+      </head>
+      <body className="min-h-screen bg-background">
+        <header className="border-b-2 border-border bg-secondary-background shadow-shadow">
+          <div className="container">
+            <nav className="flex items-center justify-between py-4">
+              {/* Logo/Brand */}
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-main border-2 border-border rounded-base shadow-shadow">
+                  <TrendingUp className="h-6 w-6 text-main-foreground" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-heading text-foreground">Rest Money</h1>
+                  <p className="text-xs text-foreground/70">Freelance Tracker</p>
+                </div>
+              </div>
+
+              {/* Navigation Links */}
+              <DesktopNav />
+              <MobileNav />
+            </nav>
+          </div>
+        </header>
+
+        <main className="flex-1 min-h-screen">{children}</main>
+
+        <Toaster richColors position="top-right" />
+        <ReactQueryDevtools buttonPosition="bottom-left" />
+        <TanStackRouterDevtools position="bottom-right" />
+        <Scripts />
+      </body>
+    </html>
+  );
+}

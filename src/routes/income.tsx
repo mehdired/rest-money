@@ -1,12 +1,14 @@
-import type { Income } from '@/types';
-import { columns } from '@/components/columns';
+import type { Income } from 'src/types';
+import { columns } from 'src/components/columns';
 import { createFileRoute } from '@tanstack/react-router';
-import { DataTable } from '@/components/datatable';
+import { DataTable } from 'src/components/datatable';
 import { dbRemoveIncome } from '../db';
-import { AddIncome } from '@/components/add-income';
+import { AddIncome } from 'src/components/add-income';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createServerFn } from '@tanstack/react-start';
 import { allIncomesQueryOptions } from './index';
+import { PageLayout } from 'src/components/layout';
+import { toast } from 'sonner';
 
 const removeIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income['id']) => d)
@@ -27,8 +29,13 @@ function Incomes() {
 
   const deleteMutation = useMutation({
     mutationFn: removeIncome,
-    onSettled: () => {
+    onSuccess: () => {
+      toast.success('Revenu supprimé avec succès');
       queryClient.invalidateQueries({ queryKey: ['incomes'] });
+    },
+    onError: (error) => {
+      console.error('Failed to delete income:', error);
+      toast.error('Erreur lors de la suppression du revenu');
     },
   });
 
@@ -41,15 +48,35 @@ function Incomes() {
       deleteMutation.mutate({ data: id });
     } catch (error) {
       console.error('Failed to delete income:', error);
+      toast.error('Erreur lors de la suppression du revenu');
     }
   };
 
-  const dataTableColumns = columns({ onDelete: deleteIncome });
+  const handleEdit = (income: Income) => {
+    // TODO: Implémenter l'édition
+    toast.info("Fonction d'édition à implémenter");
+  };
+
+  const handleView = (income: Income) => {
+    // TODO: Implémenter la vue détaillée
+    toast.info('Vue détaillée à implémenter');
+  };
+
+  const dataTableColumns = columns({
+    onDelete: deleteIncome,
+    onEdit: handleEdit,
+    onView: handleView,
+  });
 
   return (
-    <div className="container">
-      <AddIncome />
-      <DataTable columns={dataTableColumns} data={incomes} />
-    </div>
+    <PageLayout
+      title="Gestion des revenus"
+      description="Suivez et gérez tous vos revenus de freelance"
+    >
+      <div className="space-y-6">
+        <AddIncome />
+        <DataTable columns={dataTableColumns} data={incomes} getRowCanExpand={() => true} />
+      </div>
+    </PageLayout>
   );
 }

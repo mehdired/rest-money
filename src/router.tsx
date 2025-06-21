@@ -10,6 +10,7 @@ export function createRouter() {
     createTanStackRouter({
       routeTree,
       scrollRestoration: true,
+      context: { queryClient },
     }),
     queryClient
   );

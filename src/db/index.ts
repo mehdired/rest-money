@@ -1,11 +1,11 @@
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client/node';
-import { Income, Settings } from '@/types';
+import { Income, Settings } from 'src/types';
 import { income, settings } from './schema';
 import { eq } from 'drizzle-orm';
 
 const client = createClient({
-  url: 'file:./app/db/data/local.db',
+  url: 'file:./src/db/data/local.db',
 });
 
 const db = drizzle({
