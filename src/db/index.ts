@@ -5,7 +5,8 @@ import { income, settings } from './schema';
 import { eq } from 'drizzle-orm';
 
 const client = createClient({
-  url: 'file:./src/db/data/local.db',
+  url: process.env.DATABASE_URL!,
+  authToken: process.env.DATABASE_AUTH_TOKEN!,
 });
 
 const db = drizzle({
