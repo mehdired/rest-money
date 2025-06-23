@@ -11,7 +11,9 @@ export default defineConfig({
     tsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-    tanstackStart(),
+    tanstackStart({
+      target: 'node-server',
+    }),
   ],
   resolve: {
     alias: {
