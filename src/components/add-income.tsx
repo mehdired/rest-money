@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency } from 'src/utils';
 import { toast } from 'sonner';
+import { useTvaCalculation } from '@/hooks/use-calculation-tva';
 
 const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
@@ -79,33 +80,14 @@ export function AddIncome() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Calculs TVA
-  const numericAmount = parseFloat(formData.amount || '0');
   const tvaRate = Number(tvaValue?.value || 20);
 
-  let netAmount: number;
-  let tvaAmount: number;
-  let grossAmount: number;
-
-  if (!formData.hasTVA) {
-    // Revenu net de TVA (pas de TVA applicable)
-    netAmount = numericAmount;
-    tvaAmount = 0;
-    grossAmount = numericAmount;
-  } else {
-    // Revenu soumis à la TVA
-    if (formData.includeTVA) {
-      // Montant saisi TTC
-      grossAmount = numericAmount;
-      netAmount = numericAmount / (1 + tvaRate / 100);
-      tvaAmount = grossAmount - netAmount;
-    } else {
-      // Montant saisi HT
-      netAmount = numericAmount;
-      tvaAmount = numericAmount * (tvaRate / 100);
-      grossAmount = netAmount + tvaAmount;
-    }
-  }
+  const { netAmount, tvaAmount, grossAmount, numericAmount } = useTvaCalculation({
+    amount: formData.amount,
+    tvaRate,
+    hasTVA: formData.hasTVA,
+    includeTVA: formData.includeTVA,
+  });
 
   const addMutation = useMutation({
     mutationFn: addIncomeFn,
@@ -176,7 +158,7 @@ export function AddIncome() {
       id: crypto.randomUUID(),
       from: formData.from.trim(),
       date: new Date(formData.date),
-      amount: grossAmount, // Toujours stocker le montant brut
+      amount: grossAmount,
     };
 
     addMutation.mutate({ data: newIncome });
