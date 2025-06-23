@@ -14,6 +14,8 @@ dist-ssr
 .vinxi
 .output
 .env
+.nitro
+.tanstack
 
 *.db
 *.db-*
