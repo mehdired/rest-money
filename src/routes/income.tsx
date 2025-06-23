@@ -6,7 +6,7 @@ import { dbRemoveIncome } from '../db';
 import { AddIncome } from 'src/components/add-income';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { createServerFn } from '@tanstack/react-start';
-import { allIncomesQueryOptions } from './index';
+import { allIncomesQueryOptions } from './dashboard';
 import { PageLayout } from 'src/components/layout';
 import { toast } from 'sonner';
 

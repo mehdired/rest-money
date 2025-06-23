@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/libsql';
 import { createClient } from '@libsql/client/node';
 import { Income, Settings } from 'src/types';
-import { income, settings } from './schema';
+import { income, settings } from './schema/schema';
 import { eq } from 'drizzle-orm';
 
 const client = createClient({
@@ -9,7 +9,7 @@ const client = createClient({
   authToken: process.env.DATABASE_AUTH_TOKEN!,
 });
 
-const db = drizzle({
+export const db = drizzle({
   client,
 });
 
