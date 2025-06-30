@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
@@ -22,10 +22,14 @@ import { PageLayout, PageSection } from 'src/components/layout';
 import { Button } from 'src/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { EmptyState } from 'src/components/ui/empty-state';
+import { useSession } from '@/lib/auth-client';
+import { authMiddleware } from '@/lib/auth-middleware';
 
-const getAllIncomes = createServerFn({ method: 'GET' }).handler(
-  async () => await dbSelectAllIncomes()
-);
+const getAllIncomes = createServerFn({ method: 'GET' })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    return await dbSelectAllIncomes(context.user.id!);
+  });
 
 export const allIncomesQueryOptions = queryOptions({
   queryKey: ['incomes'],
@@ -36,6 +40,11 @@ export const Route = createFileRoute('/dashboard')({
   component: Index,
   loader: async ({ context }) => {
     return await context.queryClient.ensureQueryData(allIncomesQueryOptions);
+  },
+  beforeLoad: async ({ context }) => {
+    if (!context.user) {
+      throw redirect({ to: '/' });
+    }
   },
 });
 

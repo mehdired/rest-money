@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Link } from '@tanstack/react-router';
-import { Home, DollarSign, Settings, Menu, X } from 'lucide-react';
+import { Link, Navigate, useNavigate } from '@tanstack/react-router';
+import { Home, DollarSign, Settings, Menu, X, LogOut } from 'lucide-react';
 import { Button } from './button';
 import { cn } from 'src/lib/utils';
+import { signOut } from '@/lib/auth-client';
 
 interface MobileNavProps {
   className?: string;
+  user: string | undefined;
 }
 
-export function MobileNav({ className }: MobileNavProps) {
+export function MobileNav({ className, user }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -52,6 +54,11 @@ export function MobileNav({ className }: MobileNavProps) {
                 <span>{label}</span>
               </Link>
             ))}
+            {user && (
+              <Button variant="neutral" size="icon" className="cursor-pointer">
+                <LogOut className="h-4 w-4" />
+              </Button>
+            )}
           </nav>
         </div>
       </div>
@@ -59,7 +66,8 @@ export function MobileNav({ className }: MobileNavProps) {
   );
 }
 
-export function DesktopNav({ className }: { className?: string }) {
+export function DesktopNav({ className, user }: { className?: string; user: string | undefined }) {
+  const navigate = useNavigate();
   const navItems = [
     { to: '/', icon: Home, label: 'Dashboard' },
     { to: '/income', icon: DollarSign, label: 'Revenus' },
@@ -78,6 +86,24 @@ export function DesktopNav({ className }: { className?: string }) {
           <span>{label}</span>
         </Link>
       ))}
+      {user && (
+        <Button
+          variant="neutral"
+          size="icon"
+          className="cursor-pointer"
+          onClick={() => {
+            signOut({
+              fetchOptions: {
+                onSuccess: () => {
+                  navigate({ to: '/' });
+                },
+              },
+            });
+          }}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      )}
     </div>
   );
 }

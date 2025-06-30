@@ -47,3 +47,23 @@ CREATE TABLE `verification` (
 	`created_at` integer,
 	`updated_at` integer
 );
+--> statement-breakpoint
+CREATE TABLE `income` (
+	`id` text PRIMARY KEY NOT NULL,
+	`from` text NOT NULL,
+	`date` integer NOT NULL,
+	`amount` real NOT NULL,
+	`user_id` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `income_id_unique` ON `income` (`id`);--> statement-breakpoint
+CREATE TABLE `settings` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`value` text,
+	`user_id` text NOT NULL,
+	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
+CREATE UNIQUE INDEX `settings_id_unique` ON `settings` (`id`);

@@ -1,5 +1,11 @@
 import { type ReactNode } from 'react';
-import { Outlet, HeadContent, Scripts, createRootRouteWithContext } from '@tanstack/react-router';
+import {
+  Outlet,
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+  redirect,
+} from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { TrendingUp } from 'lucide-react';
 
@@ -8,10 +14,21 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
 import { DesktopNav, MobileNav } from 'src/components/ui/navigation';
 import { Toaster } from 'src/components/ui/sonner';
 import appCss from '../styles/app.css?url';
+import { getUser } from '@/lib/auth-server-fn';
+import { useSession } from '@/lib/auth-client';
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
 }>()({
+  beforeLoad: async ({ context }) => {
+    const user = await context.queryClient.fetchQuery({
+      queryKey: ['user'],
+      queryFn: getUser,
+    });
+    return {
+      user,
+    };
+  },
   head: () => ({
     links: [
       {
@@ -44,6 +61,8 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
+  const { data: session } = useSession();
+
   return (
     <html>
       <head>
@@ -66,8 +85,8 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               </div>
 
               {/* Navigation Links */}
-              <DesktopNav />
-              <MobileNav />
+              <DesktopNav user={session?.user.id} />
+              <MobileNav user={session?.user.id} />
             </nav>
           </div>
         </header>

@@ -31,11 +31,13 @@ import {
 import { formatCurrency } from 'src/utils';
 import { toast } from 'sonner';
 import { useTvaCalculation } from '@/hooks/use-calculation-tva';
+import { authMiddleware } from '@/lib/auth-middleware';
 
 const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
-  .handler(async ({ data }) => {
-    await dbInsertIncome(data);
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
+    await dbInsertIncome({ ...data, userId: context.user.id! });
   });
 
 // Types d'clients prédéfinis
@@ -75,8 +77,8 @@ export function AddIncome() {
     date: new Date().toISOString().split('T')[0], // Date d'aujourd'hui par défaut
     amount: '',
     description: '',
-    hasTVA: true, // Par défaut, soumis à la TVA
-    includeTVA: true, // Par défaut, montant TTC
+    hasTVA: true,
+    includeTVA: true,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -263,7 +265,7 @@ export function AddIncome() {
                     className={errors.date ? 'border-red-500' : ''}
                   />
                   {errors.date && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
+                    <p className="text-xs text-red-500">
                       <AlertCircle className="h-3 w-3" />
                       {errors.date}
                     </p>
@@ -295,7 +297,7 @@ export function AddIncome() {
                     className={errors.amount ? 'border-red-500' : ''}
                   />
                   {errors.amount && (
-                    <p className="text-xs text-red-500 flex items-center gap-1">
+                    <p className="text-xs text-red-500">
                       <AlertCircle className="h-3 w-3" />
                       {errors.amount}
                     </p>

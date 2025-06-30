@@ -94,7 +94,7 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     header: ({ column }) => (
       <div className="flex items-center gap-2">
         <Euro className="h-4 w-4 text-main" />
-        <span>Montant brut</span>
+        <span>Montant brut (HT)</span>
       </div>
     ),
     meta: { displayName: 'Montant brut' },
@@ -102,7 +102,9 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     enableHiding: true,
     cell: ({ row }) => {
       const amount = row.getValue('amount') as Income['amount'];
-      return <div className="font-heading text-foreground">{formatCurrency(amount)}</div>;
+      const amountNet = amount / (1 + 0.2);
+      console.log(amountNet);
+      return <div className="font-heading text-foreground">{formatCurrency(amountNet)}</div>;
     },
     sortingFn: 'alphanumeric',
   },

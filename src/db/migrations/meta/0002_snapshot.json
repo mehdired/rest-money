@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "add06d92-7ede-4815-b947-2dcf7462bf22",
-  "prevId": "1b524f96-c8cd-4f09-bd6e-57d77648829e",
+  "id": "c684721a-6442-4f33-a9fc-877029a93dcf",
+  "prevId": "add06d92-7ede-4815-b947-2dcf7462bf22",
   "tables": {
     "account": {
       "name": "account",
@@ -396,17 +396,10 @@
     "settings": {
       "name": "settings",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
         "name": {
           "name": "name",
           "type": "text",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
@@ -419,10 +412,10 @@
         }
       },
       "indexes": {
-        "settings_id_unique": {
-          "name": "settings_id_unique",
+        "settings_name_unique": {
+          "name": "settings_name_unique",
           "columns": [
-            "id"
+            "name"
           ],
           "isUnique": true
         }

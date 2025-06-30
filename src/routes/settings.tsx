@@ -11,12 +11,18 @@ import { type FormEvent } from 'react';
 import { createServerFn } from '@tanstack/react-start';
 import { queryOptions } from '@tanstack/react-query';
 import { Settings } from 'src/types';
+import { authMiddleware } from '@/lib/auth-middleware';
 
-const getSettingsFn = createServerFn({ method: 'POST' }).handler(async () => dbGetSettings());
+const getSettingsFn = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
+  .handler(async ({ context }) => {
+    return await dbGetSettings();
+  });
 
 export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Settings) => d)
-  .handler(async ({ data }) => {
+  .middleware([authMiddleware])
+  .handler(async ({ data, context }) => {
     await dbSaveSettings(data);
   });
 
