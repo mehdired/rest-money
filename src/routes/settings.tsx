@@ -12,6 +12,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { queryOptions } from '@tanstack/react-query';
 import { Settings } from 'src/types';
 import { authMiddleware } from '@/lib/auth-middleware';
+import { PageLayout } from '@/components/layout';
 
 const getSettingsFn = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
@@ -75,7 +76,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="container">
+    <PageLayout title="Paramètres" description="Gérez les paramètres de votre compte">
       <Card className="p-10">
         <form className="flex flex-col gap-4" onSubmit={saveSettings}>
           {allSettings.map((setting) => (
@@ -98,6 +99,6 @@ function RouteComponent() {
           </Button>
         </form>
       </Card>
-    </div>
+    </PageLayout>
   );
 }

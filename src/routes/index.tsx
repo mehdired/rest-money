@@ -35,19 +35,40 @@ function RouteComponent() {
       }
     );
   };
+
+  const handleTestLogin = async () => {
+    await signIn.email(
+      {
+        email: 'test@test.test',
+        password: 'test0717&',
+        callbackURL: '/dashboard',
+      },
+      {
+        onSuccess: () => {
+          navigate({ to: '/dashboard' });
+        },
+      }
+    );
+  };
   return (
-    <form className="flex flex-col gap-4 p-10 items-center justify-center" onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input type="email" name="email" />
-      </div>
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Mot de passe</Label>
-        <Input type="password" name="password" />
-      </div>
-      <Button type="submit" className="cursor-pointer">
-        Connexion
+    <div className="flex flex-col gap-4 max-w-md mx-auto p-10">
+      <form className="flex flex-col gap-4  items-center justify-center" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-2 w-full">
+          <Label htmlFor="email">Email</Label>
+          <Input type="email" name="email" />
+        </div>
+        <div className="flex flex-col gap-2 w-full">
+          <Label htmlFor="password">Mot de passe</Label>
+          <Input type="password" name="password" />
+        </div>
+        <Button type="submit" className="cursor-pointer w-full">
+          Connexion
+        </Button>
+      </form>
+      <p className="text-sm text-foreground font-bold text-center w-full">Ou</p>
+      <Button variant="neutral" className="cursor-pointer" onClick={handleTestLogin}>
+        Connexion avec un compte test
       </Button>
-    </form>
+    </div>
   );
 }

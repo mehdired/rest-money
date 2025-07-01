@@ -5,7 +5,7 @@ export const calculateUrssaf = (amount: number): number => {
   const { data: allSettings } = useQuery(getSettingsQueryOptions);
   const urssafValue = allSettings?.find((setting) => setting.name.toLowerCase() === 'urssaf');
   const urssafPerc = Number(urssafValue?.value) / 100;
-  console.log(urssafPerc);
+
   return amount * urssafPerc;
 };
 

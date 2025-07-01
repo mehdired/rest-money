@@ -23,16 +23,6 @@ export function PageLayout({
 
   return (
     <div className={`min-h-screen bg-background ${className}`}>
-      {/* Breadcrumbs */}
-      {showBreadcrumbs && pathname !== '/' && (
-        <div className="border-b border-border/20 bg-secondary-background/50">
-          <div className="container py-3">
-            <Breadcrumb items={breadcrumbs} />
-          </div>
-        </div>
-      )}
-
-      {/* Page Header */}
       {(title || description) && (
         <div className="border-b-2 border-border bg-secondary-background">
           <div className="container py-6">

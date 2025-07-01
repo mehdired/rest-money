@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
@@ -22,7 +22,6 @@ import { PageLayout, PageSection } from 'src/components/layout';
 import { Button } from 'src/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { EmptyState } from 'src/components/ui/empty-state';
-import { useSession } from '@/lib/auth-client';
 import { authMiddleware } from '@/lib/auth-middleware';
 
 const getAllIncomes = createServerFn({ method: 'GET' })
@@ -58,6 +57,7 @@ const COLORS = {
 
 function Index() {
   const { data: allIncomes } = useSuspenseQuery(allIncomesQueryOptions);
+  const navigate = useNavigate();
 
   const totalGross = allIncomes.reduce((acc, income) => acc + income.amount, 0);
   const totalUrssaf = allIncomes.reduce((acc, income) => acc + calculateUrssaf(income.amount), 0);
@@ -75,7 +75,6 @@ function Index() {
     { name: 'Impôts', value: totalImpot, fill: COLORS.impot },
   ];
 
-  // Revenus récents (3 derniers)
   const recentIncomes = allIncomes
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3);
@@ -118,12 +117,12 @@ function Index() {
               Voir tous les revenus
             </Button>
           </Link>
-          <Link to="/income">
+          {/* <Link to="/income">
             <Button variant="neutral" className="flex items-center gap-2">
               <Euro className="h-4 w-4" />
               Ajouter un revenu
             </Button>
-          </Link>
+          </Link> */}
         </div>
       </div>
 
@@ -246,12 +245,11 @@ function Index() {
                 </ResponsiveContainer>
               ) : (
                 <EmptyState
-                  icon={<Plus className="h-12 w-12 text-main" />}
                   title="Aucun revenu enregistré"
                   description="Commencez par ajouter vos premiers revenus pour voir apparaître le graphique de répartition."
                   action={{
                     label: 'Ajouter un revenu',
-                    onClick: () => (window.location.href = '/income'),
+                    onClick: () => navigate({ to: '/income' }),
                   }}
                 />
               )}

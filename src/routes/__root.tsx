@@ -4,7 +4,7 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
-  redirect,
+  Link,
 } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import { TrendingUp } from 'lucide-react';
@@ -76,7 +76,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
               {/* Logo/Brand */}
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-main border-2 border-border rounded-base shadow-shadow">
-                  <TrendingUp className="h-6 w-6 text-main-foreground" />
+                  <Link to="/">
+                    <TrendingUp className="h-6 w-6 text-main-foreground" />
+                  </Link>
                 </div>
                 <div>
                   <h1 className="text-xl font-heading text-foreground">Rest Money</h1>
@@ -91,7 +93,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
           </div>
         </header>
 
-        <main className="flex-1 min-h-screen">{children}</main>
+        <main className="flex-1 min-h-screen">
+          <div className="container py-5">
+            {session && <p>Connecté en tant que {session.user.name}</p>}
+          </div>
+          {children}
+        </main>
 
         <Toaster richColors position="top-right" />
         <ReactQueryDevtools buttonPosition="bottom-left" />

@@ -103,7 +103,7 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     cell: ({ row }) => {
       const amount = row.getValue('amount') as Income['amount'];
       const amountNet = amount / (1 + 0.2);
-      console.log(amountNet);
+
       return <div className="font-heading text-foreground">{formatCurrency(amountNet)}</div>;
     },
     sortingFn: 'alphanumeric',
@@ -178,7 +178,7 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
           </Button>
 
           {/* Menu d'actions supplémentaires */}
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="neutral"
@@ -211,7 +211,7 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
                 Supprimer
               </DropdownMenuItem>
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       );
     },
