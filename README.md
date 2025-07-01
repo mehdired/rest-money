@@ -1,54 +1,40 @@
-# React + TypeScript + Vite
+# Rest Money - Freelance Income Management
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern web application designed to help freelancers manage their income, calculate taxes, and plan financial allocations for leisure and investments.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Rest Money is a comprehensive financial management tool specifically built for freelancers to:
 
-## Expanding the ESLint configuration
+- **Track Income**: Monitor all your freelance earnings in one place
+- **Calculate Taxes**: Automatically compute how much you'll pay in taxes
+- **Net Income Tracking**: Know exactly how much money you have in your pocket after taxes
+- **Future Planning**: Prepare for upcoming features like percentage-based allocations for leisure and investments
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+### Frontend Framework
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **React** - UI library for building user interfaces
+- **TypeScript** - Type-safe JavaScript development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
+### Routing & State Management
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
+- **TanStack Router** - Type-safe routing for React applications
+- **TanStack Start** - Full-stack React framework
+- **TanStack Query** - Powerful data synchronization for React
+
+### Styling & UI
+
+- **Tailwind CSS** - Utility-first CSS framework
+- **Shadcn/ui** - Beautifully designed components built with Radix UI and Tailwind CSS
+- **Neo-brutalism Design** - Bold, raw aesthetic with strong contrasts
+
+### Authentication
+
+- **Better Auth** - Modern authentication solution for web applications
+
+### Database & Backend
+
+- **Drizzle ORM** - TypeScript ORM for SQL databases
+- **Vite** - Fast build tool and development server

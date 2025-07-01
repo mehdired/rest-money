@@ -95,7 +95,7 @@ function RouteComponent() {
           ))}
           <Button type="submit" className="cursor-pointer">
             {mutation.isPending && <LoaderCircle />}
-            Save
+            Enregistrer
           </Button>
         </form>
       </Card>
