@@ -36,6 +36,13 @@ export const Route = createRootRouteWithContext<{
         href: appCss,
       },
     ],
+    scripts: [
+      {
+        defer: true,
+        src: 'https://analytics.mcheniki.dev/js/script.js',
+        'data-domain': 'restmoney.mcheniki.dev',
+      },
+    ],
     meta: [
       {
         charSet: 'utf-8',
