@@ -9,6 +9,7 @@ export const income = sqliteTable('income', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id),
+  isTva: integer({ mode: 'boolean' }).notNull().default(true),
 });
 
 export const settings = sqliteTable('settings', {

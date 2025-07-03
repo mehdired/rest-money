@@ -82,11 +82,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
             <nav className="flex items-center justify-between py-4">
               {/* Logo/Brand */}
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-main border-2 border-border rounded-base shadow-shadow">
-                  <Link to="/">
-                    <TrendingUp className="h-6 w-6 text-main-foreground" />
-                  </Link>
-                </div>
+                <Link
+                  to="/"
+                  className="p-2 bg-main border-2 border-border rounded-base shadow-shadow"
+                >
+                  <TrendingUp className="h-6 w-6 text-main-foreground" />
+                </Link>
                 <div>
                   <h1 className="text-xl font-heading text-foreground">Rest Money</h1>
                   <p className="text-xs text-foreground/70">Freelance Tracker</p>

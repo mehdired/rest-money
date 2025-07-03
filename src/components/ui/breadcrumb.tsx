@@ -48,14 +48,12 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
   );
 }
 
-// Helper hook pour générer automatiquement les breadcrumbs basés sur la route
 export function useBreadcrumbs(pathname: string) {
   const pathSegments = pathname.split('/').filter(Boolean);
 
   const breadcrumbs: BreadcrumbItem[] = pathSegments.map((segment, index) => {
     const href = '/' + pathSegments.slice(0, index + 1).join('/');
 
-    // Mapping des segments vers des labels français
     const labelMap: Record<string, string> = {
       income: 'Revenus',
       settings: 'Paramètres',

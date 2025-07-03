@@ -59,9 +59,21 @@ function Index() {
   const { data: allIncomes } = useSuspenseQuery(allIncomesQueryOptions);
   const navigate = useNavigate();
 
-  const totalGross = allIncomes.reduce((acc, income) => acc + income.amount, 0);
-  const totalUrssaf = allIncomes.reduce((acc, income) => acc + calculateUrssaf(income.amount), 0);
-  const totalImpot = allIncomes.reduce((acc, income) => acc + calculateTaxes(income.amount), 0);
+  const totalGross = allIncomes.reduce((acc, income) => {
+    const isTva = income.isTva;
+    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
+    return acc + amount;
+  }, 0);
+  const totalUrssaf = allIncomes.reduce((acc, income) => {
+    const isTva = income.isTva;
+    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
+    return acc + calculateUrssaf(amount);
+  }, 0);
+  const totalImpot = allIncomes.reduce((acc, income) => {
+    const isTva = income.isTva;
+    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
+    return acc + calculateTaxes(amount);
+  }, 0);
   const totalNet = Math.max(0, totalGross - totalUrssaf - totalImpot);
 
   // Calculs pour les pourcentages

@@ -56,7 +56,6 @@ interface FormData {
   amount: string;
   description: string;
   hasTVA: boolean;
-  includeTVA: boolean;
 }
 
 interface FormErrors {
@@ -78,7 +77,6 @@ export function AddIncome() {
     amount: '',
     description: '',
     hasTVA: true,
-    includeTVA: true,
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -88,7 +86,6 @@ export function AddIncome() {
     amount: formData.amount,
     tvaRate,
     hasTVA: formData.hasTVA,
-    includeTVA: formData.includeTVA,
   });
 
   const addMutation = useMutation({
@@ -119,7 +116,6 @@ export function AddIncome() {
       amount: '',
       description: '',
       hasTVA: true,
-      includeTVA: true,
     });
     setErrors({});
   };
@@ -161,6 +157,7 @@ export function AddIncome() {
       from: formData.from.trim(),
       date: new Date(formData.date),
       amount: grossAmount,
+      isTva: formData.hasTVA,
     };
 
     addMutation.mutate({ data: newIncome });
@@ -277,9 +274,7 @@ export function AddIncome() {
                     <Euro className="h-3 w-3" />
                     Montant *
                     {formData.hasTVA && (
-                      <span className="text-xs text-foreground/60 ml-1">
-                        ({formData.includeTVA ? 'TTC' : 'HT'})
-                      </span>
+                      <span className="text-xs text-foreground/60 ml-1">TTC</span>
                     )}
                     {!formData.hasTVA && (
                       <span className="text-xs text-green-600 ml-1">(Net de TVA)</span>
@@ -318,25 +313,6 @@ export function AddIncome() {
                     Ce revenu est soumis à la TVA
                   </Label>
                 </div>
-
-                {formData.hasTVA && (
-                  <div className="flex items-center space-x-2 p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-base ml-6">
-                    <Checkbox
-                      id="includeTVA"
-                      checked={formData.includeTVA}
-                      onCheckedChange={(checked) =>
-                        handleInputChange('includeTVA', checked as boolean)
-                      }
-                    />
-                    <Label
-                      htmlFor="includeTVA"
-                      className="flex items-center gap-2 cursor-pointer text-sm"
-                    >
-                      <Calculator className="h-3 w-3 text-blue-600" />
-                      Le montant saisi inclut la TVA ({tvaRate}%)
-                    </Label>
-                  </div>
-                )}
               </div>
 
               {/* Récapitulatif des calculs */}

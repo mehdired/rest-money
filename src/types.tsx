@@ -3,6 +3,7 @@ export interface Income {
   from: string;
   date: Date;
   amount: number;
+  isTva: boolean;
 }
 
 export interface Settings {

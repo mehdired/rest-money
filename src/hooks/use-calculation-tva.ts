@@ -4,7 +4,6 @@ export interface TvaCalculationParams {
   amount: string;
   tvaRate: number;
   hasTVA: boolean;
-  includeTVA: boolean;
 }
 
 export interface TvaCalculationResult {
@@ -19,7 +18,6 @@ export function useTvaCalculation({
   amount,
   tvaRate,
   hasTVA,
-  includeTVA,
 }: TvaCalculationParams): TvaCalculationResult {
   return useMemo(() => {
     const numericAmount = parseFloat(amount || '0');
@@ -45,7 +43,7 @@ export function useTvaCalculation({
       tvaAmount = 0;
       grossAmount = numericAmount;
     } else {
-      if (includeTVA) {
+      if (hasTVA) {
         grossAmount = numericAmount;
         netAmount = numericAmount / (1 + tvaRate / 100);
         tvaAmount = grossAmount - netAmount;
@@ -64,45 +62,5 @@ export function useTvaCalculation({
       grossAmount: Math.round(grossAmount * 100) / 100,
       isValid: true,
     };
-  }, [amount, tvaRate, hasTVA, includeTVA]);
-}
-
-/**
- * Hook simplifié pour les calculs TVA avec des valeurs par défaut
- * Utile quand on a juste besoin d'un calcul rapide
- */
-export function useSimpleTvaCalculation(
-  amount: string,
-  tvaRate: number = 20,
-  includeTVA: boolean = true
-) {
-  return useTvaCalculation({
-    amount,
-    tvaRate,
-    hasTVA: true,
-    includeTVA,
-  });
-}
-
-/**
- * Utilitaire pour formater les résultats de calcul TVA
- * pour l'affichage dans l'interface
- */
-export function formatTvaCalculation(
-  calculation: TvaCalculationResult,
-  formatter: (amount: number) => string
-) {
-  if (!calculation.isValid) {
-    return {
-      netAmount: '0,00 €',
-      tvaAmount: '0,00 €',
-      grossAmount: '0,00 €',
-    };
-  }
-
-  return {
-    netAmount: formatter(calculation.netAmount),
-    tvaAmount: formatter(calculation.tvaAmount),
-    grossAmount: formatter(calculation.grossAmount),
-  };
+  }, [amount, tvaRate, hasTVA]);
 }

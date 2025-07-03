@@ -102,11 +102,25 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     enableHiding: true,
     cell: ({ row }) => {
       const amount = row.getValue('amount') as Income['amount'];
-      const amountNet = amount / (1 + 0.2);
-
+      const isTva = row.getValue('isTva') as Income['isTva'];
+      const amountNet = isTva ? amount / (1 + 0.2) : amount;
       return <div className="font-heading text-foreground">{formatCurrency(amountNet)}</div>;
     },
     sortingFn: 'alphanumeric',
+  },
+  {
+    id: 'isTva',
+    accessorKey: 'isTva',
+    header: 'Soumis à TVA',
+    meta: { displayName: 'isTva' },
+    enableSorting: true,
+    enableHiding: true,
+
+    cell: ({ row }) => {
+      const isTva = row.getValue('isTva') as Income['isTva'];
+
+      return <div className="font-medium text-blue-600">{isTva ? 'Oui' : 'Non'}</div>;
+    },
   },
   {
     id: 'urssaf',

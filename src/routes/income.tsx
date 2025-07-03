@@ -43,8 +43,6 @@ function Incomes() {
     if (!id) return;
 
     try {
-      // Pass the correct structure expected by the server function
-      // Wrap the id in { data: ... }
       deleteMutation.mutate({ data: id });
     } catch (error) {
       console.error('Failed to delete income:', error);
