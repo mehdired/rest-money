@@ -64,7 +64,7 @@ interface FormErrors {
   amount?: string;
 }
 
-export function AddIncome() {
+export function AddIncome({ isAddIncomeAllowed }: { isAddIncomeAllowed: boolean }) {
   const queryClient = useQueryClient();
   const { data: allSettings } = useQuery(getSettingsQueryOptions);
   const tvaValue = allSettings?.find((setting) => setting.name === 'tva');
@@ -175,7 +175,11 @@ export function AddIncome() {
   return (
     <>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <Button onClick={() => setOpenDialog(true)} className="flex items-center gap-2">
+        <Button
+          onClick={() => setOpenDialog(true)}
+          className="flex items-center gap-2"
+          disabled={!isAddIncomeAllowed}
+        >
           <Plus className="h-4 w-4" />
           Ajouter un revenu
         </Button>

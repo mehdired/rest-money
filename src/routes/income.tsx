@@ -9,6 +9,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { allIncomesQueryOptions } from './dashboard';
 import { PageLayout } from 'src/components/layout';
 import { toast } from 'sonner';
+import { useSession } from '@/lib/auth-client';
 
 const removeIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income['id']) => d)
@@ -24,8 +25,11 @@ export const Route = createFileRoute('/income')({
 });
 
 function Incomes() {
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { data: incomes } = useSuspenseQuery(allIncomesQueryOptions);
+  const isAddIncomeAllowed =
+    session?.user.name === 'Mehdi' || (session?.user.name === 'Test' && incomes.length < 5);
 
   const deleteMutation = useMutation({
     mutationFn: removeIncome,
@@ -72,7 +76,7 @@ function Incomes() {
       description="Suivez et gérez tous vos revenus de freelance"
     >
       <div className="space-y-6">
-        <AddIncome />
+        <AddIncome isAddIncomeAllowed={isAddIncomeAllowed} />
         <DataTable columns={dataTableColumns} data={incomes} getRowCanExpand={() => true} />
       </div>
     </PageLayout>
