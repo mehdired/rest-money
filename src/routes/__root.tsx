@@ -69,6 +69,7 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   const { data: session } = useSession();
+  console.log(session);
 
   return (
     <html>
@@ -93,10 +94,12 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
                   <p className="text-xs text-foreground/70">Freelance Tracker</p>
                 </div>
               </div>
-
-              {/* Navigation Links */}
-              <DesktopNav user={session?.user.id} />
-              <MobileNav user={session?.user.id} />
+              {session?.user && (
+                <>
+                  <DesktopNav />
+                  <MobileNav />
+                </>
+              )}
             </nav>
           </div>
         </header>

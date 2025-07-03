@@ -1,6 +1,6 @@
 import type { Income } from 'src/types';
 import { columns } from 'src/components/columns';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { DataTable } from 'src/components/datatable';
 import { dbRemoveIncome } from '../db';
 import { AddIncome } from 'src/components/add-income';
@@ -19,6 +19,11 @@ const removeIncome = createServerFn({ method: 'POST', response: 'data' })
 
 export const Route = createFileRoute('/income')({
   component: Incomes,
+  beforeLoad: async ({ context }) => {
+    if (!context.user) {
+      throw redirect({ to: '/' });
+    }
+  },
   loader: async ({ context }) => {
     return await context.queryClient.ensureQueryData(allIncomesQueryOptions);
   },

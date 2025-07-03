@@ -5,7 +5,7 @@ import { Label } from 'src/components/ui/label';
 import { LoaderCircle } from 'lucide-react';
 import { dbSaveSettings, dbGetSettings } from 'src/db';
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { type FormEvent } from 'react';
 
 import { createServerFn } from '@tanstack/react-start';
@@ -34,6 +34,11 @@ export const getSettingsQueryOptions = queryOptions({
 
 export const Route = createFileRoute('/settings')({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    if (!context.user) {
+      throw redirect({ to: '/' });
+    }
+  },
   loader: async ({ context }) => {
     return await context.queryClient.ensureQueryData(getSettingsQueryOptions);
   },

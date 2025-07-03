@@ -7,10 +7,9 @@ import { signOut } from '@/lib/auth-client';
 
 interface MobileNavProps {
   className?: string;
-  user: string | undefined;
 }
 
-export function MobileNav({ className, user }: MobileNavProps) {
+export function MobileNav({ className }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navItems = [
@@ -34,7 +33,6 @@ export function MobileNav({ className, user }: MobileNavProps) {
       {/* Mobile menu overlay */}
       {isOpen && <div className="fixed inset-0 z-40 bg-overlay" onClick={() => setIsOpen(false)} />}
 
-      {/* Mobile menu */}
       <div
         className={cn(
           'fixed right-0 top-0 z-40 h-full w-64 bg-secondary-background border-l-2 border-border shadow-shadow transform transition-transform duration-300 ease-in-out',
@@ -54,11 +52,9 @@ export function MobileNav({ className, user }: MobileNavProps) {
                 <span>{label}</span>
               </Link>
             ))}
-            {user && (
-              <Button variant="neutral" size="icon" className="cursor-pointer">
-                <LogOut className="h-4 w-4" />
-              </Button>
-            )}
+            <Button variant="neutral" size="icon" className="cursor-pointer">
+              <LogOut className="h-4 w-4" />
+            </Button>
           </nav>
         </div>
       </div>
@@ -66,7 +62,7 @@ export function MobileNav({ className, user }: MobileNavProps) {
   );
 }
 
-export function DesktopNav({ className, user }: { className?: string; user: string | undefined }) {
+export function DesktopNav({ className }: { className?: string }) {
   const navigate = useNavigate();
   const navItems = [
     { to: '/', icon: Home, label: 'Dashboard' },
@@ -86,24 +82,23 @@ export function DesktopNav({ className, user }: { className?: string; user: stri
           <span>{label}</span>
         </Link>
       ))}
-      {user && (
-        <Button
-          variant="neutral"
-          size="icon"
-          className="cursor-pointer"
-          onClick={() => {
-            signOut({
-              fetchOptions: {
-                onSuccess: () => {
-                  navigate({ to: '/' });
-                },
+
+      <Button
+        variant="neutral"
+        size="icon"
+        className="cursor-pointer"
+        onClick={() => {
+          signOut({
+            fetchOptions: {
+              onSuccess: () => {
+                navigate({ to: '/' });
               },
-            });
-          }}
-        >
-          <LogOut className="h-4 w-4" />
-        </Button>
-      )}
+            },
+          });
+        }}
+      >
+        <LogOut className="h-4 w-4" />
+      </Button>
     </div>
   );
 }
