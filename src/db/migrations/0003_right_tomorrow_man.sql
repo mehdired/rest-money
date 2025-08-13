@@ -1,0 +1,1 @@
+ALTER TABLE `income` ADD `isTva` integer DEFAULT true NOT NULL;

@@ -1,0 +1,235 @@
+@import 'tailwindcss' source('../');
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #ffffff;
+  --secondary-background: #f1eff8;
+  --foreground: #1d3e3b;
+  --main-foreground: #ffffff;
+  --main: #e94b00;
+  --border: #1d3e3b;
+  --ring: #ff5702;
+  --overlay: rgba(29, 62, 59, 0.85);
+  --shadow: 4px 2px 0px 0px var(--border);
+
+  --success: #62a91b;
+  --success-foreground: #ffffff;
+  --success-light: #8aed26;
+  --error: #da261a;
+  --error-foreground: #ffffff;
+  --error-light: #f02a1d;
+  --warning: #decc30;
+  --warning-foreground: #665e16;
+  --warning-light: #f6e233;
+  --info: #3e7e92;
+  --info-foreground: #ffffff;
+  --info-light: #58b1cd;
+
+  --chart-1: #e94b00;
+  --chart-2: #62a91b;
+  --chart-3: #da261a;
+  --chart-4: #decc30;
+  --chart-5: #3e7e92;
+  --chart-active-dot: #1d3e3b;
+}
+
+.dark {
+  --background: #12141b;
+  --secondary-background: #1f212d;
+  --foreground: #ffffff;
+  --main-foreground: #12141b;
+  --main: #ff762a;
+  --border: #71dfd5;
+  --ring: #ff8845;
+  --overlay: rgba(255, 118, 42, 0.2);
+  --shadow: 4px 2px 0px 0px var(--border);
+
+  --success: #8aed26;
+  --success-foreground: #12141b;
+  --success-light: #a1f151;
+  --error: #f02a1d;
+  --error-foreground: #ffffff;
+  --error-light: #f3554a;
+  --warning: #f6e233;
+  --warning-foreground: #12141b;
+  --warning-light: #f7e75c;
+  --info: #58b1cd;
+  --info-foreground: #12141b;
+  --info-light: #79c1d7;
+
+  --chart-1: #ff762a;
+  --chart-2: #8aed26;
+  --chart-3: #f02a1d;
+  --chart-4: #f6e233;
+  --chart-5: #58b1cd;
+  --chart-active-dot: #71dfd5;
+}
+
+@theme inline {
+  --color-main: var(--main);
+  --color-background: var(--background);
+  --color-secondary-background: var(--secondary-background);
+  --color-foreground: var(--foreground);
+  --color-main-foreground: var(--main-foreground);
+  --color-border: var(--border);
+  --color-overlay: var(--overlay);
+  --color-ring: var(--ring);
+
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-light: var(--success-light);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-error-light: var(--error-light);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-light: var(--warning-light);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-light: var(--info-light);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --spacing-boxShadowX: 4px;
+  --spacing-boxShadowY: 2px;
+  --spacing-reverseBoxShadowX: -4px;
+  --spacing-reverseBoxShadowY: -2px;
+  --radius-base: 15px;
+  --shadow-shadow: var(--shadow);
+  --font-weight-base: 500;
+  --font-weight-heading: 700;
+}
+
+@utility container {
+  @apply px-4 mx-auto;
+}
+
+.nav-link-active {
+  @apply bg-main text-main-foreground border-border shadow-shadow;
+}
+
+.nav-link-hover {
+  @apply hover:border-border hover:bg-secondary-background hover:shadow-shadow hover:translate-x-1 hover:translate-y-1 transition-all duration-200;
+}
+
+.mobile-menu-enter {
+  @apply transform translate-x-full;
+}
+
+.mobile-menu-enter-active {
+  @apply transform translate-x-0 transition-transform duration-300 ease-in-out;
+}
+
+.mobile-menu-exit {
+  @apply transform translate-x-0;
+}
+
+.mobile-menu-exit-active {
+  @apply transform translate-x-full transition-transform duration-300 ease-in-out;
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.text-success-foreground {
+  color: var(--success-foreground);
+}
+
+.text-success-light {
+  color: var(--success-light);
+}
+
+.bg-success {
+  background-color: var(--success);
+}
+
+.bg-success-light {
+  background-color: var(--success-light);
+}
+
+.text-error {
+  color: var(--error);
+}
+
+.text-error-foreground {
+  color: var(--error-foreground);
+}
+
+.text-error-light {
+  color: var(--error-light);
+}
+
+.bg-error {
+  background-color: var(--error);
+}
+
+.bg-error-light {
+  background-color: var(--error-light);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-warning-foreground {
+  color: var(--warning-foreground);
+}
+
+.text-warning-light {
+  color: var(--warning-light);
+}
+
+.bg-warning {
+  background-color: var(--warning);
+}
+
+.bg-warning-light {
+  background-color: var(--warning-light);
+}
+
+.text-info {
+  color: var(--info);
+}
+
+.text-info-foreground {
+  color: var(--info-foreground);
+}
+
+.text-info-light {
+  color: var(--info-light);
+}
+
+.bg-info {
+  background-color: var(--info);
+}
+
+.bg-info-light {
+  background-color: var(--info-light);
+}
+
+.brutal-card {
+  @apply border-2 border-border shadow-shadow bg-background;
+}
+
+.brutal-card:hover {
+  @apply translate-x-1 translate-y-1 transition-transform duration-200;
+}
+
+.brutal-button {
+  @apply border-2 border-border shadow-shadow bg-main text-main-foreground font-bold;
+}
+
+.brutal-button:hover {
+  @apply translate-x-1 translate-y-1 transition-transform duration-200;
+}
+
+.brutal-button:active {
+  @apply translate-x-2 translate-y-2 shadow-none;
+}
