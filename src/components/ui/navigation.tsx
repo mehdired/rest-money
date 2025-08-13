@@ -9,14 +9,14 @@ interface MobileNavProps {
   className?: string;
 }
 
+const navItems = [
+  { to: '/dashboard', icon: Home, label: 'Dashboard' },
+  { to: '/income', icon: DollarSign, label: 'Revenus' },
+  { to: '/settings', icon: Settings, label: 'Paramètres' },
+];
+
 export function MobileNav({ className }: MobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
-
-  const navItems = [
-    { to: '/', icon: Home, label: 'Dashboard' },
-    { to: '/income', icon: DollarSign, label: 'Revenus' },
-    { to: '/settings', icon: Settings, label: 'Paramètres' },
-  ];
 
   return (
     <div className={cn('md:hidden', className)}>
@@ -64,11 +64,6 @@ export function MobileNav({ className }: MobileNavProps) {
 
 export function DesktopNav({ className }: { className?: string }) {
   const navigate = useNavigate();
-  const navItems = [
-    { to: '/', icon: Home, label: 'Dashboard' },
-    { to: '/income', icon: DollarSign, label: 'Revenus' },
-    { to: '/settings', icon: Settings, label: 'Paramètres' },
-  ];
 
   return (
     <div className={cn('hidden md:flex items-center gap-2', className)}>
