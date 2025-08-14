@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
-import { calculateTaxes, calculateUrssaf, formatCurrency } from '../utils';
+import { calculateTaxes, formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
@@ -23,6 +23,7 @@ import { Button } from 'src/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { EmptyState } from 'src/components/ui/empty-state';
 import { authMiddleware } from '@/lib/auth-middleware';
+import { useTaxesCalculation } from '@/hooks/use-taxes-rates';
 
 const getAllIncomes = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
@@ -67,7 +68,7 @@ function Index() {
   const totalUrssaf = allIncomes.reduce((acc, income) => {
     const isTva = income.isTva;
     const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
-    return acc + calculateUrssaf(amount);
+    return acc + useTaxesCalculation(amount);
   }, 0);
   const totalImpot = allIncomes.reduce((acc, income) => {
     const isTva = income.isTva;

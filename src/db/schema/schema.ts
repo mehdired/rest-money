@@ -13,6 +13,6 @@ export const income = sqliteTable('income', {
 });
 
 export const settings = sqliteTable('settings', {
-  name: text().primaryKey().unique(),
-  value: text(),
+  name: text().primaryKey().unique().notNull(),
+  value: text().notNull(),
 });
