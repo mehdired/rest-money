@@ -10,6 +10,7 @@ import { allIncomesQueryOptions } from './dashboard';
 import { PageLayout } from 'src/components/layout';
 import { toast } from 'sonner';
 import { useSession } from '@/lib/auth-client';
+import { useTaxesRate } from '@/hooks/use-taxes-rates';
 
 const removeIncome = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income['id']) => d)
@@ -33,6 +34,7 @@ function Incomes() {
   const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { data: incomes } = useSuspenseQuery(allIncomesQueryOptions);
+  const taxRates = useTaxesRate();
   const isAddIncomeAllowed =
     session?.user.name === 'Mehdi' || (session?.user.name === 'Test' && incomes.length < 5);
 
@@ -73,6 +75,7 @@ function Incomes() {
     onDelete: deleteIncome,
     onEdit: handleEdit,
     onView: handleView,
+    taxRates,
   });
 
   return (

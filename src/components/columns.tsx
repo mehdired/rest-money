@@ -1,34 +1,38 @@
 import { ColumnDef } from '@tanstack/react-table';
 import type { Income } from '../types';
-import {
-  Trash2,
-  Plus,
-  Minus,
-  Building2,
-  Calendar,
-  Euro,
-  MoreHorizontal,
-  Eye,
-  Edit3,
-} from 'lucide-react';
+import { Trash2, Plus, Minus, Building2, Calendar, Euro } from 'lucide-react';
 import { Button } from './ui/button';
 import { formatCurrency } from 'src/utils';
-import { calculateTaxes, calculateUrssaf } from 'src/utils';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from './ui/dropdown-menu';
+import { totalsCaltulation } from 'src/utils/taxes';
+
+interface TaxRates {
+  [key: string]: number;
+}
+
+// Helper functions pour les calculs dans les colonnes
+const calculateUrssafForColumn = (income: Income, taxRates: TaxRates): number => {
+  const calculation = totalsCaltulation(income.amount, income.isTva, taxRates);
+  return calculation.urssaf;
+};
+
+const calculateTaxesForColumn = (income: Income, taxRates: TaxRates): number => {
+  const calculation = totalsCaltulation(income.amount, income.isTva, taxRates);
+  return calculation.taxes;
+};
+
+const calculateNetForColumn = (income: Income, taxRates: TaxRates): number => {
+  const calculation = totalsCaltulation(income.amount, income.isTva, taxRates);
+  return calculation.final;
+};
 
 export interface ColumnsProps {
   onDelete: (id: Income['id']) => void;
   onEdit?: (income: Income) => void;
   onView?: (income: Income) => void;
+  taxRates: TaxRates;
 }
 
-export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<Income>[] => [
+export const columns = ({ onDelete, onEdit, onView, taxRates }: ColumnsProps): ColumnDef<Income>[] => [
   {
     id: 'expand',
     header: '',
@@ -101,10 +105,9 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     enableSorting: true,
     enableHiding: true,
     cell: ({ row }) => {
-      const amount = row.getValue('amount') as Income['amount'];
-      const isTva = row.getValue('isTva') as Income['isTva'];
-      const amountNet = isTva ? amount / (1 + 0.2) : amount;
-      return <div className="font-heading text-foreground">{formatCurrency(amountNet)}</div>;
+      const income = row.original;
+      const calculation = totalsCaltulation(income.amount, income.isTva, taxRates);
+      return <div className="font-heading text-foreground">{formatCurrency(calculation.exclVat)}</div>;
     },
     sortingFn: 'alphanumeric',
   },
@@ -128,10 +131,10 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     meta: { displayName: 'URSSAF' },
     enableSorting: true,
     enableHiding: true,
-    accessorFn: (row) => calculateUrssaf(row.amount),
+    accessorFn: (row) => calculateUrssafForColumn(row, taxRates),
     cell: ({ row }) => {
-      const amount = row.getValue('amount') as Income['amount'];
-      const urssaf = calculateUrssaf(amount);
+      const income = row.original;
+      const urssaf = calculateUrssafForColumn(income, taxRates);
       return <div className="font-medium text-orange-600">-{formatCurrency(urssaf)}</div>;
     },
   },
@@ -141,10 +144,10 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     meta: { displayName: 'Impôts' },
     enableSorting: true,
     enableHiding: true,
-    accessorFn: (row) => calculateTaxes(row.amount),
+    accessorFn: (row) => calculateTaxesForColumn(row, taxRates),
     cell: ({ row }) => {
-      const amount = row.getValue('amount') as Income['amount'];
-      const taxes = calculateTaxes(amount);
+      const income = row.original;
+      const taxes = calculateTaxesForColumn(income, taxRates);
       return <div className="font-medium text-red-600">-{formatCurrency(taxes)}</div>;
     },
   },
@@ -154,16 +157,10 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
     meta: { displayName: 'Net estimé' },
     enableSorting: true,
     enableHiding: true,
-    accessorFn: (row) => {
-      const urssaf = calculateUrssaf(row.amount);
-      const taxes = calculateTaxes(row.amount);
-      return Math.max(0, row.amount - urssaf - taxes);
-    },
+    accessorFn: (row) => calculateNetForColumn(row, taxRates),
     cell: ({ row }) => {
-      const amount = row.getValue('amount') as Income['amount'];
-      const urssaf = calculateUrssaf(amount);
-      const taxes = calculateTaxes(amount);
-      const net = Math.max(0, amount - urssaf - taxes);
+      const income = row.original;
+      const net = calculateNetForColumn(income, taxRates);
 
       return <div className="font-heading text-green-600">{formatCurrency(net)}</div>;
     },
@@ -190,42 +187,6 @@ export const columns = ({ onDelete, onEdit, onView }: ColumnsProps): ColumnDef<I
           >
             <Trash2 className="h-3 w-3 text-red-500" />
           </Button>
-
-          {/* Menu d'actions supplémentaires */}
-          {/* <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="neutral"
-                size="sm"
-                className="w-8 h-8 p-0"
-                aria-label="Plus d'actions"
-              >
-                <MoreHorizontal className="h-3 w-3" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {onView && (
-                <DropdownMenuItem onClick={() => onView(income)}>
-                  <Eye className="h-4 w-4 mr-2" />
-                  Voir les détails
-                </DropdownMenuItem>
-              )}
-              {onEdit && (
-                <DropdownMenuItem onClick={() => onEdit(income)}>
-                  <Edit3 className="h-4 w-4 mr-2" />
-                  Modifier
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={() => onDelete(income.id)}
-                className="text-red-600 focus:text-red-600"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Supprimer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu> */}
         </div>
       );
     },

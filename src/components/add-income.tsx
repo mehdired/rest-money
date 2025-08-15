@@ -16,7 +16,6 @@ import { Textarea } from './ui/textarea';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { dbInsertIncome } from 'src/db';
 import { createServerFn } from '@tanstack/react-start';
-import { getSettingsQueryOptions } from 'src/routes/settings';
 import {
   Plus,
   Euro,
@@ -32,6 +31,7 @@ import { formatCurrency } from 'src/utils';
 import { toast } from 'sonner';
 import { useTvaCalculation } from '@/hooks/use-calculation-tva';
 import { authMiddleware } from '@/lib/auth-middleware';
+import { useSettings } from '@/hooks/use-settings';
 
 const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Income) => d)
@@ -66,7 +66,7 @@ interface FormErrors {
 
 export function AddIncome({ isAddIncomeAllowed }: { isAddIncomeAllowed: boolean }) {
   const queryClient = useQueryClient();
-  const { data: allSettings } = useQuery(getSettingsQueryOptions);
+  const allSettings = useSettings();
   const tvaValue = allSettings?.find((setting) => setting.name === 'tva');
 
   const [openDialog, setOpenDialog] = useState(false);
