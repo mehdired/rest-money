@@ -1,8 +1,8 @@
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type VisibilityState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -21,15 +21,12 @@ import {
   ChevronRight,
   Search,
   Filter,
-  MoreHorizontal,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   Eye,
-  EyeOff,
   RefreshCw,
   Download,
-  Settings2,
 } from 'lucide-react';
 import {
   DropdownMenu,

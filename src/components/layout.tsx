@@ -1,26 +1,13 @@
 import { type ReactNode } from 'react';
-import { useRouter } from '@tanstack/react-router';
-import { Breadcrumb, useBreadcrumbs } from './ui/breadcrumb';
 
 interface PageLayoutProps {
   children: ReactNode;
   title?: string;
   description?: string;
-  showBreadcrumbs?: boolean;
   className?: string;
 }
 
-export function PageLayout({
-  children,
-  title,
-  description,
-  showBreadcrumbs = true,
-  className = '',
-}: PageLayoutProps) {
-  const router = useRouter();
-  const pathname = router.state.location.pathname;
-  const breadcrumbs = useBreadcrumbs(pathname);
-
+export function PageLayout({ children, title, description, className = '' }: PageLayoutProps) {
   return (
     <div className={`min-h-screen bg-background ${className}`}>
       {(title || description) && (
@@ -38,7 +25,6 @@ export function PageLayout({
   );
 }
 
-// Composant pour les sections de page
 export function PageSection({
   children,
   className = '',
