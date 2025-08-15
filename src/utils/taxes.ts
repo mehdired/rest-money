@@ -2,13 +2,12 @@ interface IncomeCalculation {
   gross: number;
   exclVat: number;
   urssaf: number;
-  impot: number;
-  netFinal: number;
+  taxes: number;
+  final: number;
 }
 
 interface TaxRates {
-  urssaf: number;
-  vat: number;
+  [key: string]: number;
 }
 
 export const exclVatAmount = (grossAmount: number, vatRate: number) => {
@@ -43,22 +42,22 @@ export const taxesAmount = (amountNetTva: number): number => {
   return taxAmount;
 };
 
-export const calculateIncome = (
+export const totalsCaltulation = (
   amount: number,
   hasTVA: boolean,
   rates: TaxRates
 ): IncomeCalculation => {
   const gross = amount;
-  const exclVat = hasTVA ? exclVatAmount(gross, rates.vat) : gross;
-  const urssaf = urssafAmount(exclVat, rates.urssaf);
-  const impot = taxesAmount(exclVat);
-  const netFinal = Math.max(0, exclVat - urssaf - impot);
+  const exclVat = hasTVA ? exclVatAmount(gross, rates.TVA) : gross;
+  const urssaf = urssafAmount(exclVat, rates.URSSAF);
+  const taxes = taxesAmount(exclVat);
+  const final = Math.max(0, exclVat - urssaf - taxes);
 
   return {
     gross,
     exclVat,
     urssaf,
-    impot,
-    netFinal,
+    taxes,
+    final,
   };
 };

@@ -1,5 +1,5 @@
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
-import { calculateTaxes, formatCurrency } from '../utils';
+import { formatCurrency } from '../utils';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
@@ -14,16 +14,16 @@ import {
   FileText,
   Calendar,
   Target,
-  AlertCircle,
   CheckCircle2,
-  Plus,
 } from 'lucide-react';
 import { PageLayout, PageSection } from 'src/components/layout';
 import { Button } from 'src/components/ui/button';
 import { Link } from '@tanstack/react-router';
 import { EmptyState } from 'src/components/ui/empty-state';
 import { authMiddleware } from '@/lib/auth-middleware';
-import { useTaxesCalculation } from '@/hooks/use-taxes-rates';
+import { useTaxesRate } from '@/hooks/use-taxes-rates';
+import { totalsCaltulation } from '@/utils/taxes';
+import { useMemo } from 'react';
 
 const getAllIncomes = createServerFn({ method: 'GET' })
   .middleware([authMiddleware])
@@ -48,44 +48,57 @@ export const Route = createFileRoute('/dashboard')({
   },
 });
 
-// Colors cohérentes avec le thème
 const COLORS = {
-  net: '#16a34a', // Vert pour le net
-  urssaf: '#ea580c', // Orange pour URSSAF
-  impot: '#dc2626', // Rouge pour impôts
-  gross: '#3b82f6', // Bleu pour le brut
+  net: '#16a34a',
+  urssaf: '#ea580c',
+  impot: '#dc2626',
+  gross: '#3b82f6',
 };
 
 function Index() {
   const { data: allIncomes } = useSuspenseQuery(allIncomesQueryOptions);
   const navigate = useNavigate();
+  const taxesRates = useTaxesRate();
 
-  const totalGross = allIncomes.reduce((acc, income) => {
-    const isTva = income.isTva;
-    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
-    return acc + amount;
-  }, 0);
-  const totalUrssaf = allIncomes.reduce((acc, income) => {
-    const isTva = income.isTva;
-    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
-    return acc + useTaxesCalculation(amount);
-  }, 0);
-  const totalImpot = allIncomes.reduce((acc, income) => {
-    const isTva = income.isTva;
-    const amount = isTva ? income.amount / (1 + 0.2) : income.amount;
-    return acc + calculateTaxes(amount);
-  }, 0);
-  const totalNet = Math.max(0, totalGross - totalUrssaf - totalImpot);
+  const amounts = useMemo(() => {
+    return allIncomes.reduce(
+      (acc, income) => {
+        const { gross, exclVat, urssaf, taxes, final } = totalsCaltulation(
+          income.amount,
+          income.isTva,
+          taxesRates
+        );
+
+        return {
+          gross: acc.gross + gross,
+          exclVat: acc.exclVat + exclVat,
+          urssaf: acc.urssaf + urssaf,
+          taxes: acc.taxes + taxes,
+          final: acc.final + final,
+        };
+      },
+      {
+        gross: 0,
+        exclVat: 0,
+        urssaf: 0,
+        taxes: 0,
+        final: 0,
+      }
+    );
+  }, [allIncomes, taxesRates]);
 
   // Calculs pour les pourcentages
-  const urssafPercentage = totalGross > 0 ? ((totalUrssaf / totalGross) * 100).toFixed(1) : 0;
-  const impotPercentage = totalGross > 0 ? ((totalImpot / totalGross) * 100).toFixed(1) : 0;
-  const netPercentage = totalGross > 0 ? ((totalNet / totalGross) * 100).toFixed(1) : 0;
+  const urssafPercentage =
+    amounts.gross > 0 ? ((amounts.urssaf / amounts.gross) * 100).toFixed(1) : 0;
+  const taxesPercentage =
+    amounts.gross > 0 ? ((amounts.taxes / amounts.gross) * 100).toFixed(1) : 0;
+  const finalPercentage =
+    amounts.gross > 0 ? ((amounts.final / amounts.gross) * 100).toFixed(1) : 0;
 
   const pieChartData = [
-    { name: 'Net Restant', value: totalNet, fill: COLORS.net },
-    { name: 'URSSAF', value: totalUrssaf, fill: COLORS.urssaf },
-    { name: 'Impôts', value: totalImpot, fill: COLORS.impot },
+    { name: 'Net Restant', value: amounts.final, fill: COLORS.net },
+    { name: 'URSSAF', value: amounts.urssaf, fill: COLORS.urssaf },
+    { name: 'Impôts', value: amounts.taxes, fill: COLORS.impot },
   ];
 
   const recentIncomes = allIncomes
@@ -95,7 +108,7 @@ function Index() {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0];
-      const percentage = totalGross > 0 ? ((data.value / totalGross) * 100).toFixed(1) : 0;
+      const percentage = amounts.gross > 0 ? ((data.value / amounts.gross) * 100).toFixed(1) : 0;
       return (
         <div className="bg-secondary-background p-3 border-2 border-border rounded-base shadow-shadow text-sm">
           <p className="font-heading text-foreground">{`${data.name}`}</p>
@@ -109,7 +122,7 @@ function Index() {
   };
 
   return (
-    <PageLayout showBreadcrumbs={false} className="bg-background">
+    <PageLayout className="bg-background">
       {/* Hero Section */}
       <div className="mb-8">
         <div className="flex items-center gap-4 mb-4">
@@ -169,7 +182,7 @@ function Index() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-heading text-foreground">
-                {formatCurrency(totalGross)}
+                {formatCurrency(amounts.gross)}
               </div>
               <p className="text-xs text-foreground/60 flex items-center gap-1 mt-1">
                 <TrendingUp className="h-3 w-3" />
@@ -188,7 +201,7 @@ function Index() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-heading text-orange-600">
-                -{formatCurrency(totalUrssaf)}
+                -{formatCurrency(amounts.urssaf)}
               </div>
               <p className="text-xs text-foreground/60 flex items-center gap-1 mt-1">
                 <Target className="h-3 w-3" />
@@ -207,11 +220,11 @@ function Index() {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-heading text-red-600">
-                -{formatCurrency(totalImpot)}
+                -{formatCurrency(amounts.taxes)}
               </div>
               <p className="text-xs text-foreground/60 flex items-center gap-1 mt-1">
                 <Target className="h-3 w-3" />
-                {impotPercentage}% du CA
+                {taxesPercentage}% du CA
               </p>
             </CardContent>
           </Card>
@@ -281,15 +294,15 @@ function Index() {
               </CardHeader>
               <CardContent>
                 <div className="text-4xl font-heading text-green-600 mb-2">
-                  {formatCurrency(totalNet)}
+                  {formatCurrency(amounts.final)}
                 </div>
                 <p className="text-sm text-foreground/70 mb-3">
-                  {netPercentage}% de votre chiffre d'affaires
+                  {finalPercentage}% de votre chiffre d'affaires
                 </p>
                 <div className="text-xs text-foreground/60 space-y-1">
                   <p>Après déduction des charges :</p>
-                  <p>• URSSAF : {formatCurrency(totalUrssaf)}</p>
-                  <p>• Impôts : {formatCurrency(totalImpot)}</p>
+                  <p>• URSSAF : {formatCurrency(amounts.urssaf)}</p>
+                  <p>• Impôts : {formatCurrency(amounts.taxes)}</p>
                 </div>
               </CardContent>
             </Card>

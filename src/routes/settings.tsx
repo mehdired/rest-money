@@ -9,28 +9,18 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { type FormEvent } from 'react';
 
 import { createServerFn } from '@tanstack/react-start';
-import { queryOptions } from '@tanstack/react-query';
+
 import { Settings } from 'src/types';
 import { authMiddleware } from '@/lib/auth-middleware';
 import { PageLayout } from '@/components/layout';
-
-const getSettingsFn = createServerFn({ method: 'POST' })
-  .middleware([authMiddleware])
-  .handler(async ({ context }) => {
-    return await dbGetSettings();
-  });
+import { getSettingsQueryOptions, useSettings } from '@/hooks/use-settings';
 
 export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
   .validator((d: Settings) => d)
   .middleware([authMiddleware])
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
     await dbSaveSettings(data);
   });
-
-export const getSettingsQueryOptions = queryOptions({
-  queryKey: ['settings'],
-  queryFn: getSettingsFn,
-});
 
 export const Route = createFileRoute('/settings')({
   component: RouteComponent,
@@ -46,7 +36,7 @@ export const Route = createFileRoute('/settings')({
 
 function RouteComponent() {
   const queryClient = useQueryClient();
-  const { data: allSettings } = useSuspenseQuery(getSettingsQueryOptions);
+  const allSettings = useSettings();
 
   const mutation = useMutation({
     mutationFn: saveSettingsFn,
