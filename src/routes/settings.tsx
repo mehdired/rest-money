@@ -16,7 +16,7 @@ import { PageLayout } from '@/components/layout';
 import { getSettingsQueryOptions, useSettings } from '@/hooks/use-settings';
 
 export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
-  .validator((d: Settings) => d)
+  .inputValidator((d: Settings) => d)
   .middleware([authMiddleware])
   .handler(async ({ data }) => {
     await dbSaveSettings(data);
