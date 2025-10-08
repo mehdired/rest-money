@@ -7,12 +7,6 @@ export function LandingHeader() {
             <a href="/" className="text-2xl font-bold tracking-tight">
               Rest-Money
             </a>
-            <span
-              className="hidden rounded-full border-2 border-border px-3 py-1 text-xs font-semibold uppercase tracking-widest text-foreground/70 md:inline-flex"
-              style={{ boxShadow: 'var(--shadow)' }}
-            >
-              Beta privée
-            </span>
           </div>
 
           <div className="hidden items-center gap-6 md:flex">

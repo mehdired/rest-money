@@ -9,17 +9,10 @@ export default defineConfig({
     port: 3000,
   },
   plugins: [
-    // react({
-    //   babel: {
-    //     plugins: ['babel-plugin-react-compiler'],
-    //   },
-    // }),
     tsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-    tanstackStart({
-      target: 'node-server',
-    }),
+    tanstackStart(),
   ],
   resolve: {
     alias: {
