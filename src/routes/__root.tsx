@@ -77,36 +77,36 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <HeadContent />
       </head>
       <body className="min-h-screen bg-background">
-        <header className="border-b-2 border-border bg-secondary-background shadow-shadow">
-          <div className="container">
-            <nav className="flex items-center justify-between py-4">
-              {/* Logo/Brand */}
-              <div className="flex items-center gap-3">
-                <Link
-                  to="/"
-                  className="p-2 bg-main border-2 border-border rounded-base shadow-shadow"
-                >
-                  <TrendingUp className="h-6 w-6 text-main-foreground" />
-                </Link>
-                <div>
-                  <h1 className="text-xl font-heading text-foreground">Rest Money</h1>
-                  <p className="text-xs text-foreground/70">Freelance Tracker</p>
+        {session?.user && (
+          <header className="border-b-2 border-border bg-secondary-background shadow-shadow">
+            <div className="container">
+              <nav className="flex items-center justify-between py-4">
+                {/* Logo/Brand */}
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/dashboard"
+                    className="p-2 bg-main border-2 border-border rounded-base shadow-shadow"
+                  >
+                    <TrendingUp className="h-6 w-6 text-main-foreground" />
+                  </Link>
+                  <div>
+                    <h1 className="text-xl font-heading text-foreground">Rest Money</h1>
+                    <p className="text-xs text-foreground/70">Freelance Tracker</p>
+                  </div>
                 </div>
-              </div>
-              {session?.user && (
-                <>
-                  <DesktopNav />
-                  <MobileNav />
-                </>
-              )}
-            </nav>
-          </div>
-        </header>
+                <DesktopNav />
+                <MobileNav />
+              </nav>
+            </div>
+          </header>
+        )}
 
         <main className="flex-1 min-h-screen">
-          <div className="container py-5">
-            {session && <p>Connecté en tant que {session.user.name}</p>}
-          </div>
+          {session?.user && (
+            <div className="container py-5">
+              <p>Connecté en tant que {session.user.name}</p>
+            </div>
+          )}
           {children}
         </main>
 
