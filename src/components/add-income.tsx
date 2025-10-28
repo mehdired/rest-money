@@ -33,8 +33,8 @@ import { useTvaCalculation } from '@/hooks/use-calculation-tva';
 import { authMiddleware } from '@/lib/auth-middleware';
 import { useSettings } from '@/hooks/use-settings';
 
-const addIncomeFn = createServerFn({ method: 'POST', response: 'data' })
-  .validator((d: Income) => d)
+const addIncomeFn = createServerFn({ method: 'POST' })
+  .inputValidator((d: Income) => d)
   .middleware([authMiddleware])
   .handler(async ({ data, context }) => {
     await dbInsertIncome({ ...data, userId: context.user.id! });

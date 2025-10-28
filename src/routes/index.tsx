@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router';
 import { LandingHeader } from '@/components/landing/header';
 import { LandingFooter } from '@/components/landing/footer';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
+  beforeLoad: async ({ context }) => {
+    if (context.user) {
+      throw redirect({ to: '/dashboard' });
+    }
+  },
 });
 
 function RouteComponent() {
@@ -71,9 +76,7 @@ function RouteComponent() {
                       <p className="text-sm uppercase tracking-wide text-foreground/70">
                         Chiffre d'affaires
                       </p>
-                      <p className="text-xl font-[weight:var(--font-weight-heading)]">
-                        7 840 €
-                      </p>
+                      <p className="text-xl font-[weight:var(--font-weight-heading)]">7 840 €</p>
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div
@@ -106,9 +109,7 @@ function RouteComponent() {
                       <p className="text-sm uppercase tracking-wide text-foreground/70">
                         Net estimé
                       </p>
-                      <p className="text-xl font-[weight:var(--font-weight-heading)]">
-                        4 180 €
-                      </p>
+                      <p className="text-xl font-[weight:var(--font-weight-heading)]">4 180 €</p>
                     </div>
                   </div>
                 </div>
@@ -176,7 +177,8 @@ function RouteComponent() {
                 Les fonctionnalités
               </h2>
               <p className="mt-4 text-lg text-foreground/80">
-                Chaque élément de l'interface restitue les informations essentielles pour suivre ta trésorerie.
+                Chaque élément de l'interface restitue les informations essentielles pour suivre ta
+                trésorerie.
               </p>
             </div>
             <div className="mt-12 grid gap-8 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
@@ -206,7 +208,8 @@ function RouteComponent() {
                     Paramètres personnalisables
                   </h3>
                   <p className="mt-3 text-foreground/80">
-                    Configure tes taux de TVA, URSSAF et impôts pour adapter les calculs à ta situation.
+                    Configure tes taux de TVA, URSSAF et impôts pour adapter les calculs à ta
+                    situation.
                   </p>
                   <ul className="mt-4 space-y-2 text-sm text-foreground/70">
                     <li className="flex items-center gap-2">
@@ -238,7 +241,8 @@ function RouteComponent() {
                     </h4>
                   </div>
                   <p className="text-sm text-foreground/70">
-                    Ajoute montant, date et client. Tri et recherche pour retrouver facilement tes revenus.
+                    Ajoute montant, date et client. Tri et recherche pour retrouver facilement tes
+                    revenus.
                   </p>
                 </div>
                 <div
@@ -320,15 +324,11 @@ function RouteComponent() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 inline-block h-2 w-2 rounded-full bg-main"></span>
-                  <span>
-                    Cotisations URSSAF calculées sur ton chiffre d'affaires
-                  </span>
+                  <span>Cotisations URSSAF calculées sur ton chiffre d'affaires</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 inline-block h-2 w-2 rounded-full bg-main"></span>
-                  <span>
-                    Impôt sur le revenu avec abattement de 34% et tranches progressives
-                  </span>
+                  <span>Impôt sur le revenu avec abattement de 34% et tranches progressives</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="mt-1 inline-block h-2 w-2 rounded-full bg-main"></span>
@@ -372,9 +372,7 @@ function RouteComponent() {
               <h2 className="text-3xl font-[weight:var(--font-weight-heading)] tracking-tight md:text-4xl">
                 Comment ça marche
               </h2>
-              <p className="mt-4 text-lg text-foreground/80">
-                3 étapes simples
-              </p>
+              <p className="mt-4 text-lg text-foreground/80">3 étapes simples</p>
             </div>
             <ol className="mt-12 grid gap-6 md:grid-cols-3">
               <li className="brutal-card relative rounded-[var(--radius-base)] p-6">
@@ -451,7 +449,8 @@ function RouteComponent() {
                 Puis-je configurer les taux de calcul&nbsp;?
               </summary>
               <p className="mt-3 text-sm text-foreground/70">
-                Oui. Tu peux personnaliser les taux de TVA, URSSAF et l'abattement fiscal dans la page Paramètres pour adapter les calculs à ta situation.
+                Oui. Tu peux personnaliser les taux de TVA, URSSAF et l'abattement fiscal dans la
+                page Paramètres pour adapter les calculs à ta situation.
               </p>
             </details>
             <details
@@ -468,7 +467,6 @@ function RouteComponent() {
             </details>
           </div>
         </section>
-
       </main>
 
       <LandingFooter />

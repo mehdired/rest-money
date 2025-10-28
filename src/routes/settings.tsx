@@ -15,7 +15,7 @@ import { authMiddleware } from '@/lib/auth-middleware';
 import { PageLayout } from '@/components/layout';
 import { getSettingsQueryOptions, useSettings } from '@/hooks/use-settings';
 
-export const saveSettingsFn = createServerFn({ method: 'POST', response: 'data' })
+export const saveSettingsFn = createServerFn({ method: 'POST' })
   .inputValidator((d: Settings) => d)
   .middleware([authMiddleware])
   .handler(async ({ data }) => {

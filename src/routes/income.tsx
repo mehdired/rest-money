@@ -12,8 +12,8 @@ import { toast } from 'sonner';
 import { useSession } from '@/lib/auth-client';
 import { useTaxesRate } from '@/hooks/use-taxes-rates';
 
-const removeIncome = createServerFn({ method: 'POST', response: 'data' })
-  .validator((d: Income['id']) => d)
+const removeIncome = createServerFn({ method: 'POST' })
+  .inputValidator((d: Income['id']) => d)
   .handler(async ({ data }) => {
     return await dbRemoveIncome(data);
   });

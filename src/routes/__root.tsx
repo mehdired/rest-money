@@ -25,6 +25,7 @@ export const Route = createRootRouteWithContext<{
       queryKey: ['user'],
       queryFn: getUser,
     });
+
     return {
       user,
     };
